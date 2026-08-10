@@ -1,0 +1,124 @@
+admin_panel/
+├── public/
+│   ├── images/
+│   └── icons/
+│
+├── src/
+│   ├── app/
+│   │   ├── layout.js                 # Root layout + Redux Provider
+│   │   ├── page.js                   # Home route: /
+│   │   ├── globals.css
+│   │   ├── favicon.ico
+│   │   │
+│   │   ├── login/
+│   │   │   └── page.js               # /login
+│   │   │
+│   │   └── dashboard/
+│   │       ├── layout.js              # Dashboard sidebar and header
+│   │       ├── page.js                # /dashboard
+│   │       │
+│   │       ├── products/
+│   │       │   ├── page.js            # /dashboard/products
+│   │       │   ├── add/
+│   │       │   │   └── page.js        # /dashboard/products/add
+│   │       │   └── [id]/
+│   │       │       └── page.js        # /dashboard/products/:id
+│   │       │
+│   │       ├── orders/
+│   │       │   ├── page.js            # /dashboard/orders
+│   │       │   └── [id]/
+│   │       │       └── page.js        # /dashboard/orders/:id
+│   │       │
+│   │       └── users/
+│   │           ├── page.js            # /dashboard/users
+│   │           └── [id]/
+│   │               └── page.js        # /dashboard/users/:id
+│   │
+│   ├── components/
+│   │   ├── common/
+│   │   │   ├── Button.jsx
+│   │   │   ├── Input.jsx
+│   │   │   ├── Modal.jsx
+│   │   │   ├── Loader.jsx
+│   │   │   └── Table.jsx
+│   │   │
+│   │   └── dashboard/
+│   │       ├── Header.jsx
+│   │       ├── Sidebar.jsx
+│   │       └── StatCard.jsx
+│   │
+│   ├── layouts/
+│   │   └── DashboardLayout.jsx
+│   │
+│   ├── store/
+│   │   ├── store.js
+│   │   ├── StoreProvider.jsx
+│   │   └── features/
+│   │       ├── products/
+│   │       │   ├── productSlice.js
+│   │       │   └── productThunks.js
+│   │       ├── orders/
+│   │       │   ├── orderSlice.js
+│   │       │   └── orderThunks.js
+│   │       └── auth/
+│   │           ├── authSlice.js
+│   │           └── authThunks.js
+│   │
+│   ├── services/
+│   │   ├── api.js
+│   │   ├── productService.js
+│   │   ├── orderService.js
+│   │   └── authService.js
+│   │
+│   ├── hooks/
+│   │   ├── useAppDispatch.js
+│   │   └── useAppSelector.js
+│   │
+│   ├── utils/
+│   │   ├── constants.js
+│   │   └── helpers.js
+│   │
+│   └── middleware.js
+│
+├── .env.local
+├── .gitignore
+├── eslint.config.mjs
+├── jsconfig.json
+├── next.config.mjs
+├── package.json
+├── package-lock.json
+└── postcss.config.mjs
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+src/app/
+├── products/
+│   ├── page.jsx          → /products
+│   ├── new/
+│   │   └── page.jsx      → /products/new
+│   └── [id]/
+│       ├── page.jsx      → /products/123
+│       └── edit/
+│           └── page.jsx  → /products/123/edit
+│
+├── categories/
+│   ├── page.jsx          → /categories
+│   ├── new/
+│   │   └── page.jsx      → /categories/new
+│   └── [id]/
+│       └── edit/
+│           └── page.jsx  → /categories/123/edit
+│
+├── orders/
+│   ├── page.jsx          → /orders
+│   └── [id]/
+│       └── page.jsx      → /orders/123
+│
+└── users/
+    ├── page.jsx          → /users
+    └── [id]/
+        └── page.jsx      → /users/123
