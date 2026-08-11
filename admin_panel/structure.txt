@@ -122,3 +122,37 @@ src/app/
     ├── page.jsx          → /users
     └── [id]/
         └── page.jsx      → /users/123
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        page.jsx       → "I have a page here"
+
+layout.jsx     → "Wrap my pages with shared UI"
+
+loading.jsx    → "Show this while my page loads"
+
+error.jsx      → "Show this when my page crashes"
+
+not-found.jsx  → "Show this when the requested resource doesn't exist"
+
+template.jsx   → "Give me a fresh wrapper instance"
+
+default.jsx    → "Fallback for parallel routes"
+
+global-error   → "Root-level error fallback"
