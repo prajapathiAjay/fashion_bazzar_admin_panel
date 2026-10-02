@@ -17,14 +17,14 @@ import {
 // Add/remove sections here — the sidebar renders whatever is in this list
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { label: "Products", href: "/admin/products", icon: ShoppingBag },
-  { label: "Orders", href: "/admin/orders", icon: PackageSearch },
-  { label: "Customers", href: "/admin/customers", icon: Users },
-  { label: "Discounts", href: "/admin/discounts", icon: Tags },
-  { label: "Shipping", href: "/admin/shipping", icon: Truck },
-  { label: "Reviews", href: "/admin/reviews", icon: MessageSquare },
-  { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
-  { label: "Settings", href: "/admin/settings", icon: Settings },
+  { label: "Products", href: "/products", icon: ShoppingBag },
+  { label: "Orders", href: "/orders", icon: PackageSearch },
+  { label: "Customers", href: "/customers", icon: Users },
+  { label: "Discounts", href: "/discounts", icon: Tags },
+  { label: "Shipping", href: "/shipping", icon: Truck },
+  { label: "Reviews", href: "/reviews", icon: MessageSquare },
+  { label: "Analytics", href: "/analytics", icon: BarChart3 },
+  { label: "Settings", href: "/settings", icon: Settings },
 ];
 
 const EXPANDED_WIDTH = "w-64";
