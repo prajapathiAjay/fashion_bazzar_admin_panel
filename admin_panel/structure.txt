@@ -156,3 +156,28 @@ template.jsx   → "Give me a fresh wrapper instance"
 default.jsx    → "Fallback for parallel routes"
 
 global-error   → "Root-level error fallback"
+
+
+
+
+folder structure with Redux
+
+admin_panel/
+├── app/
+│   ├── layout.js              ← wraps everything in <StoreProvider>
+│   └── (admin)/products/
+│       └── page.jsx           ← calls useGetProductsQuery()
+│
+├── components/                ← UI only, gets data through props
+│
+└── lib/
+    ├── store.js               ← combines all reducers and middleware
+    ├── StoreProvider.jsx      ← makes the store available to the app
+    ├── api/
+    │   ├── baseApi.js         ← API base URL + auth token + tags
+    │   ├── productsApi.js     ← product endpoints
+    │   ├── ordersApi.js
+    │   └── usersApi.js
+    └── features/
+        ├── auth/authSlice.js  ← token, logged-in user
+        └── ui/uiSlice.js      ← sidebar open/closed, etc.

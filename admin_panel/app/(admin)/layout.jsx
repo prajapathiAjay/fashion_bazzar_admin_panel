@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import AdminSidebar from "../components/admin/AdminSidebar";
-import AdminNavbar from "../components/admin/AdminNavbar";
+import AdminSidebar from "@/components/admin/AdminSidebar";
+import AdminNavbar from "@/components/admin/AdminNavbar";
 
 export default function AdminLayout({ children }) {
   const [collapsed, setCollapsed] = useState(false);

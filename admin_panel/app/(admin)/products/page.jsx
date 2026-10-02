@@ -63,7 +63,7 @@
 // }
 
 
-import Table from "@/app/components/admin/Table";
+import Table from "@/components/admin/Table";
 
 const tableData = [{ productName: "new product", category: "raymond" }];
 
