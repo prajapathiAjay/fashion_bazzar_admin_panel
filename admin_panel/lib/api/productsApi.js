@@ -5,6 +5,7 @@ export const productsApi = baseApi.injectEndpoints({
     // GET http://localhost:3200/api/products
     getProducts: build.query({
       query: () => "/products",
+    //   query: () => ({ url: "/products", method: "GET" })
       transformResponse: (response) => response.data,
       providesTags: ["Product"],
     }),
