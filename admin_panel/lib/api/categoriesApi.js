@@ -6,7 +6,8 @@ export const categoriesApi = baseApi.injectEndpoints({
     getCategories: build.query({
       query: () => "/category",
       transformResponse: (response) => response.data,
-      providesTags: ["Category"],
+      // "LIST" lets a delete refresh the list without refetching the deleted category
+      providesTags: [{ type: "Category", id: "LIST" }],
     }),
 
     // GET /category/:id
@@ -22,10 +23,16 @@ export const categoriesApi = baseApi.injectEndpoints({
       invalidatesTags: ["Category"],
     }),
 
-    // PUT /category/:id  (body: same shape as create)
+    // PATCH /category/:id  (body: same shape as create)
     updateCategory: build.mutation({
       query: ({ id, ...body }) => ({ url: `/category/${id}`, method: "PATCH", body }),
       invalidatesTags: (result, error, { id }) => ["Category", { type: "Category", id }],
+    }),
+
+    // DELETE /category/:id
+    deleteCategory: build.mutation({
+      query: (id) => ({ url: `/category/${id}`, method: "DELETE" }),
+      invalidatesTags: [{ type: "Category", id: "LIST" }],
     }),
   }),
 });
@@ -35,4 +42,5 @@ export const {
   useGetCategoryQuery,
   useCreateCategoryMutation,
   useUpdateCategoryMutation,
-} = categoriesApi;
+  useDeleteCategoryMutation,
+}= categoriesApi;
