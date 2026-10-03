@@ -17,7 +17,7 @@ import {
 
 // Add/remove sections here — the sidebar renders whatever is in this list
 const NAV_ITEMS = [
-  { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Products", href: "/products", icon: ShoppingBag },
   { label: "Categories", href: "/category", icon: LayoutGrid },
   { label: "Orders", href: "/orders", icon: PackageSearch },
@@ -57,8 +57,7 @@ export default function AdminSidebar({ collapsed }) {
       {/* Scrollable nav */}
       <nav className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-5 space-y-1 scrollbar-thin">
         {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
-          const isActive =
-            href === "/admin" ? pathname === href : pathname?.startsWith(href);
+          const isActive = pathname?.startsWith(href);
 
           return (
             <Link

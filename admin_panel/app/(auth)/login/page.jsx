@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { Eye, EyeOff, ArrowRight } from "lucide-react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,8 +13,8 @@ export default function LoginPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // TODO: wire up auth logic
-    redirect("admin")
     console.log({ email, password });
+    router.push("/dashboard");
   };
 
   return (
