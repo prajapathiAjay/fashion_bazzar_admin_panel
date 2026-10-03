@@ -3,24 +3,24 @@
 import { useRouter } from "next/navigation";
 import CategoryForm from "@/components/category/CategoryForm";
 import { useCreateCategoryMutation } from "@/lib/api/categoriesApi";
+import { useUploadFilesMutation } from "@/lib/api/uploadApi";
 
 export default function NewCategoryPage() {
   const router = useRouter();
+  const [uploadFiles] = useUploadFilesMutation();
   const [createCategory] = useCreateCategoryMutation();
 
   const handleSubmit = async ({ imageFile, ...category }) => {
-    let body = category;
+    let image = category.image;
 
-    // Send multipart only when an image is attached; the backend reads it as the "image" field
+    // 1. Upload the image first (if one was picked) to get its Cloudinary URL
     if (imageFile) {
-      body = new FormData();
-      body.append("categoryName", category.categoryName);
-      body.append("description", category.description);
-      body.append("isActive", String(category.isActive));
-      body.append("image", imageFile);
+      const [uploaded] = await uploadFiles({ files: imageFile, folder: "categories" }).unwrap();
+      image = uploaded.url;
     }
 
-    await createCategory(body).unwrap();
+    // 2. Save the category with the image URL
+    await createCategory({ ...category, image }).unwrap();
     router.push("/category");
   };
 
