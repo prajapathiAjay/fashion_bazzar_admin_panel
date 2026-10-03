@@ -8,6 +8,7 @@ import {
   PackageSearch,
   Users,
   Tags,
+  LayoutGrid,
   Truck,
   MessageSquare,
   BarChart3,
@@ -18,6 +19,7 @@ import {
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { label: "Products", href: "/products", icon: ShoppingBag },
+  { label: "Categories", href: "/category", icon: LayoutGrid },
   { label: "Orders", href: "/orders", icon: PackageSearch },
   { label: "Customers", href: "/customers", icon: Users },
   { label: "Discounts", href: "/discounts", icon: Tags },

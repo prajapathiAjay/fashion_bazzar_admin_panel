@@ -56,7 +56,7 @@ const router=useRouter()
           </thead>
 
           <tbody className="divide-y divide-gray-100 bg-white">
-            {data.length === 0 ? (
+            {data?.length === 0 ? (
               <tr>
                 <td
                   colSpan={columns.length}
@@ -66,12 +66,12 @@ const router=useRouter()
                 </td>
               </tr>
             ) : (
-              data.map((row, rowIndex) => (
+              data?.map((row, rowIndex) => (
                 <tr
                   key={row.id ?? rowIndex}
                   className="hover:bg-gray-50 transition-colors"
                 >
-                  {columns.map((col) => (
+                  {columns?.map((col) => (
                     <td
                       key={col.value}
                       className="px-4 py-3 text-gray-800 whitespace-nowrap"
