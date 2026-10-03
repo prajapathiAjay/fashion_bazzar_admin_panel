@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Table from "@/components/admin/Table";
 import { useGetCategoriesQuery } from "@/lib/api/categoriesApi";
 
@@ -7,6 +8,7 @@ const columns = [
   { col_label: "Category Name", value: "categoryName" },
   { col_label: "Description", value: "description" },
   { col_label: "Status", value: "status" },
+  { col_label: "Actions", value: "actions" },
 ];
 
 export default function Category() {
@@ -19,6 +21,14 @@ export default function Category() {
     ...c,
     id: c._id,
     status: c.isActive ? "Active" : "Inactive",
+    actions: (
+      <Link
+        href={`/category/${c._id}/edit`}
+        className="font-medium text-indigo-600 hover:text-indigo-800"
+      >
+        Edit
+      </Link>
+    ),
   }));
 
   return (
