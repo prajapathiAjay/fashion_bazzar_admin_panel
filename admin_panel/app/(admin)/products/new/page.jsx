@@ -1,22 +1,22 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import ProductForm from "@/components/products/ProductForm"
+import ProductForm from "@/components/products/ProductForm";
+import { useCreateProductMutation } from "@/lib/api/productsApi";
+import { useUploadFilesMutation } from "@/lib/api/uploadApi";
+import { resolveImageUrls } from "@/lib/uploadImages";
 
 export default function NewProductPage() {
   const router = useRouter();
+  const [uploadFiles] = useUploadFilesMutation();
+  const [createProduct] = useCreateProductMutation();
 
   const handleSubmit = async (product) => {
-    const res = await fetch("/api/products", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(product),
-    });
+    // 1. Upload newly picked images to Cloudinary, keeping their order
+    const images = await resolveImageUrls(product.images, uploadFiles, "products");
 
-    if (!res.ok) {
-      throw new Error("Failed to create product");
-    }
-
+    // 2. Save the product with the image URLs
+    await createProduct({ ...product, images }).unwrap();
     router.push("/products");
   };
 
