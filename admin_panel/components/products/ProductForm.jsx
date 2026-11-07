@@ -259,6 +259,7 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
         stock: product.stock === "" ? 0 : Number(product.stock),
         isActive: product.isActive,
         categories: product.categories,
+        sellingPrice: product.price * (1 - (product.discount === "" ? 0 : Number(product.discount)) / 100),
         sizes: product.sizes,
         colors: product.colors,
         images: images.map((img) => img.url ?? img.file),
@@ -575,6 +576,7 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
                   </div>
                   <FieldError message={errors.discount} />
                 </div>
+                
 
                 <div>
                   <label className={labelClass}>Stock quantity</label>
