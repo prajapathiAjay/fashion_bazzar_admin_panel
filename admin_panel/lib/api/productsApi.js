@@ -4,9 +4,11 @@ export const productsApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     // GET http://localhost:3200/api/products
     getProducts: build.query({
-      query: () => "/products",
+      // the list endpoint is paginated and returns { items, total, page, pages, limit };
+      // the admin table wants every product (inactive too), newest first
+      query: () => ({ url: "/products", params: { includeInactive: true, sort: "newest", limit: 500 } }),
     //   query: () => ({ url: "/products", method: "GET" })
-      transformResponse: (response) => response.data,
+      transformResponse: (response) => response.data?.items ?? [],
       providesTags: ["Product"],
     }),
 
