@@ -11,6 +11,7 @@ import {
   LayoutGrid,
   Truck,
   MessageSquare,
+  CircleHelp,
   BarChart3,
   Settings,
 } from "lucide-react";
@@ -25,6 +26,7 @@ const NAV_ITEMS = [
   { label: "Discounts", href: "/discounts", icon: Tags },
   { label: "Shipping", href: "/shipping", icon: Truck },
   { label: "Reviews", href: "/reviews", icon: MessageSquare },
+  { label: "FAQs", href: "/faq", icon: CircleHelp },
   { label: "Analytics", href: "/analytics", icon: BarChart3 },
   { label: "Settings", href: "/settings", icon: Settings },
 ];
@@ -37,19 +39,19 @@ export default function AdminSidebar({ collapsed }) {
 
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-30 flex flex-col border-r border-[#E8E4DC] bg-white transition-all duration-200 ${
+      className={`fixed inset-y-0 left-0 z-30 flex flex-col border-r border-line bg-white transition-all duration-200 ${
         collapsed ? COLLAPSED_WIDTH : EXPANDED_WIDTH
       }`}
     >
       {/* Wordmark */}
-      <div className="flex h-16 shrink-0 items-center border-b border-[#E8E4DC] px-5 overflow-hidden">
+      <div className="flex h-16 shrink-0 items-center border-b border-line px-5 overflow-hidden">
         {collapsed ? (
-          <span className="font-serif text-lg font-semibold text-[#7A1F2B]">
+          <span className="font-display text-lg font-semibold text-brand">
             FB
           </span>
         ) : (
-          <span className="font-serif text-xl tracking-tight text-[#2A2A28] whitespace-nowrap">
-            Fashion <span className="text-[#7A1F2B]">Bazar</span>
+          <span className="font-display text-xl tracking-tight text-ink whitespace-nowrap">
+            Fashion <span className="text-brand">Bazar</span>
           </span>
         )}
       </div>
@@ -68,8 +70,8 @@ export default function AdminSidebar({ collapsed }) {
                 collapsed ? "justify-center" : ""
               } ${
                 isActive
-                  ? "bg-[#7A1F2B]/[0.08] text-[#7A1F2B] font-medium"
-                  : "text-[#6B6B63] hover:bg-[#F5F1E8] hover:text-[#2A2A28]"
+                  ? "bg-brand/[0.08] text-brand font-medium"
+                  : "text-muted hover:bg-mist hover:text-ink"
               }`}
             >
               <Icon size={19} strokeWidth={1.75} className="shrink-0" />
@@ -77,7 +79,7 @@ export default function AdminSidebar({ collapsed }) {
 
               {/* Tooltip when collapsed */}
               {collapsed && (
-                <span className="pointer-events-none absolute left-full ml-2 whitespace-nowrap rounded-md bg-[#2A2A28] px-2.5 py-1.5 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 z-40">
+                <span className="pointer-events-none absolute left-full ml-2 whitespace-nowrap rounded-md bg-ink px-2.5 py-1.5 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 z-40">
                   {label}
                 </span>
               )}
@@ -87,8 +89,8 @@ export default function AdminSidebar({ collapsed }) {
       </nav>
 
       {/* Footer */}
-      <div className="shrink-0 border-t border-[#E8E4DC] px-5 py-4 overflow-hidden">
-        <p className="text-xs text-[#A6A69C] whitespace-nowrap">
+      <div className="shrink-0 border-t border-line px-5 py-4 overflow-hidden">
+        <p className="text-xs text-subtle whitespace-nowrap">
           {collapsed ? "v1.0" : "Fashion Bazar Admin · v1.0"}
         </p>
       </div>

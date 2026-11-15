@@ -8,7 +8,7 @@ export default function AdminLayout({ children }) {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#FAFAF8]">
+    <div className="min-h-screen bg-snow">
       <AdminSidebar collapsed={collapsed} />
 
       {/* Offset content by current sidebar width */}

@@ -34,9 +34,9 @@ const router=useRouter()
 
   return (<>
   {(tableHeading || addButton) && (
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-line">
           {tableHeading && (
-            <h3 className="text-base font-semibold text-gray-800">
+            <h3 className="text-base font-semibold text-ink">
               {tableHeading}
             </h3>
           )}
@@ -45,7 +45,7 @@ const router=useRouter()
             <button
               type="button"
               onClick={()=>router.push(addButton.path)}
-              className="inline-flex items-center gap-1.5 rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-md bg-brand px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-1 transition-colors"
             >
               {addButton.name}
             </button>
@@ -54,20 +54,20 @@ const router=useRouter()
       )}
     {/* The card is exactly as tall as the rest of the screen (minus navbar, page padding
         and heading), so the footer always sits at the bottom of the viewport */}
-    <div className="flex h-[calc(100vh-12rem)] min-h-80 w-full flex-col overflow-hidden rounded-lg border border-gray-200 shadow-sm bg-white">
+    <div className="flex h-[calc(100vh-12rem)] min-h-80 w-full flex-col overflow-hidden rounded-lg border border-line shadow-sm bg-white">
 
       {/* flex-1 + min-h-0 + overflow-auto: the rows get the free space and scroll
           inside it when there are too many, instead of pushing the footer down */}
       <div className="min-h-0 w-full flex-1 overflow-auto">
-        <table className="min-w-full divide-y divide-gray-200 text-sm">
+        <table className="min-w-full divide-y divide-line text-sm">
           {/* sticky: the column headings stay visible while the rows scroll */}
-          <thead className="sticky top-0 z-10 bg-gray-50 shadow-[0_1px_0_0_#e5e7eb]">
+          <thead className="sticky top-0 z-10 bg-snow shadow-[0_1px_0_0_#ECE5DD]">
             <tr>
               {columns.map((col) => (
                 <th
                   key={col.value}
                   scope="col"
-                  className="px-4 py-3 text-left font-semibold text-gray-700 whitespace-nowrap"
+                  className="px-4 py-3 text-left font-semibold text-ink-soft whitespace-nowrap"
                 >
                   {col.col_label}
                 </th>
@@ -75,12 +75,12 @@ const router=useRouter()
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-gray-100 bg-white">
+          <tbody className="divide-y divide-line bg-white">
             {total === 0 ? (
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="px-4 py-6 text-center text-gray-400"
+                  className="px-4 py-6 text-center text-subtle"
                 >
                   No data available
                 </td>
@@ -89,12 +89,12 @@ const router=useRouter()
               visibleRows.map((row, rowIndex) => (
                 <tr
                   key={row._id ?? row.id ?? start + rowIndex}
-                  className="hover:bg-gray-50 transition-colors"
+                  className="hover:bg-snow transition-colors"
                 >
                   {columns?.map((col) => (
                     <td
                       key={col.value}
-                      className="px-4 py-3 text-gray-800 whitespace-nowrap"
+                      className="px-4 py-3 text-ink whitespace-nowrap"
                     >
                       {row[col.value]}
                     </td>
@@ -108,13 +108,13 @@ const router=useRouter()
 
       {/* Footer: range, rows per page, page numbers */}
       {total > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-200 px-4 py-3 text-sm text-gray-600">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-3 text-sm text-muted">
           <p>
             Showing{" "}
-            <span className="font-medium text-gray-800">
+            <span className="font-medium text-ink">
               {start + 1}–{Math.min(start + pageSize, total)}
             </span>{" "}
-            of <span className="font-medium text-gray-800">{total}</span>
+            of <span className="font-medium text-ink">{total}</span>
           </p>
 
           <label className="flex items-center gap-2">
@@ -125,7 +125,7 @@ const router=useRouter()
                 setPageSize(Number(e.target.value));
                 setPage(1); // a new page size starts again from the first page
               }}
-              className="rounded-md border border-gray-300 bg-white px-2 py-1 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="rounded-md border border-line-strong bg-white px-2 py-1 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-brand"
             >
               {ROWS_PER_PAGE_OPTIONS.map((n) => (
                 <option key={n} value={n}>

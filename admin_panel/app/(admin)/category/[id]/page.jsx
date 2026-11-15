@@ -23,22 +23,22 @@ export default function ViewCategoryPage() {
     }
   };
 
-  if (isLoading) return <p className="p-6 text-gray-500">Loading category...</p>;
-  if (error || !category) return <p className="p-6 text-red-500">Category not found</p>;
+  if (isLoading) return <p className="p-6 text-muted">Loading category...</p>;
+  if (error || !category) return <p className="p-6 text-danger">Category not found</p>;
 
   return (
     <div className="mx-auto w-full max-w-4xl p-6">
       {/* Header */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <nav className="mb-2 flex items-center gap-1.5 text-xs text-gray-500">
-            <Link href="/category" className="hover:text-indigo-600">
+          <nav className="mb-2 flex items-center gap-1.5 text-xs text-muted">
+            <Link href="/category" className="hover:text-brand">
               Categories
             </Link>
             <span>/</span>
-            <span className="font-medium text-gray-700">{category.categoryName}</span>
+            <span className="font-medium text-ink-soft">{category.categoryName}</span>
           </nav>
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">
+          <h1 className="text-2xl font-semibold tracking-tight text-ink">
             {category.categoryName}
           </h1>
         </div>
@@ -48,13 +48,13 @@ export default function ViewCategoryPage() {
             type="button"
             onClick={handleDelete}
             disabled={isDeleting}
-            className="rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-600 shadow-sm transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-lg border border-danger/30 bg-white px-4 py-2 text-sm font-medium text-danger shadow-sm transition hover:bg-danger-50 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isDeleting ? "Deleting..." : "Delete"}
           </button>
           <Link
             href={`/category/${id}/edit`}
-            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700"
+            className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-brand-dark"
           >
             Edit
           </Link>
@@ -63,7 +63,7 @@ export default function ViewCategoryPage() {
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-5">
         {/* Image */}
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm md:col-span-2">
+        <div className="overflow-hidden rounded-xl border border-line bg-white shadow-sm md:col-span-2">
           {category.image ? (
             <img
               src={category.image}
@@ -71,27 +71,27 @@ export default function ViewCategoryPage() {
               className="aspect-[4/3] w-full object-cover"
             />
           ) : (
-            <div className="flex aspect-[4/3] w-full items-center justify-center bg-gray-50 text-sm text-gray-400">
+            <div className="flex aspect-[4/3] w-full items-center justify-center bg-snow text-sm text-subtle">
               No image
             </div>
           )}
         </div>
 
         {/* Details */}
-        <dl className="divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white shadow-sm md:col-span-3">
+        <dl className="divide-y divide-line rounded-xl border border-line bg-white shadow-sm md:col-span-3">
           <div className="px-5 py-4">
-            <dt className="text-xs font-medium uppercase tracking-wide text-gray-500">Status</dt>
+            <dt className="text-xs font-medium uppercase tracking-wide text-muted">Status</dt>
             <dd className="mt-1">
               <span
                 className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
                   category.isActive
-                    ? "bg-green-50 text-green-700 ring-1 ring-green-200"
-                    : "bg-gray-100 text-gray-600 ring-1 ring-gray-200"
+                    ? "bg-success-50 text-success ring-1 ring-success/30"
+                    : "bg-mist text-muted ring-1 ring-line"
                 }`}
               >
                 <span
                   className={`h-1.5 w-1.5 rounded-full ${
-                    category.isActive ? "bg-green-500" : "bg-gray-400"
+                    category.isActive ? "bg-success" : "bg-line-hover"
                   }`}
                 />
                 {category.isActive ? "Active" : "Inactive"}
@@ -99,19 +99,19 @@ export default function ViewCategoryPage() {
             </dd>
           </div>
           <div className="px-5 py-4">
-            <dt className="text-xs font-medium uppercase tracking-wide text-gray-500">Description</dt>
-            <dd className="mt-1 whitespace-pre-line text-sm text-gray-800">
-              {category.description || <span className="text-gray-400">No description</span>}
+            <dt className="text-xs font-medium uppercase tracking-wide text-muted">Description</dt>
+            <dd className="mt-1 whitespace-pre-line text-sm text-ink">
+              {category.description || <span className="text-subtle">No description</span>}
             </dd>
           </div>
           <div className="grid grid-cols-2 gap-4 px-5 py-4">
             <div>
-              <dt className="text-xs font-medium uppercase tracking-wide text-gray-500">Created</dt>
-              <dd className="mt-1 text-sm text-gray-800">{formatDate(category.createdAt)}</dd>
+              <dt className="text-xs font-medium uppercase tracking-wide text-muted">Created</dt>
+              <dd className="mt-1 text-sm text-ink">{formatDate(category.createdAt)}</dd>
             </div>
             <div>
-              <dt className="text-xs font-medium uppercase tracking-wide text-gray-500">Updated</dt>
-              <dd className="mt-1 text-sm text-gray-800">{formatDate(category.updatedAt)}</dd>
+              <dt className="text-xs font-medium uppercase tracking-wide text-muted">Updated</dt>
+              <dd className="mt-1 text-sm text-ink">{formatDate(category.updatedAt)}</dd>
             </div>
           </div>
         </dl>

@@ -46,7 +46,7 @@ export default function Pagination({
   const isLast = currentPage === totalPages;
 
   const baseBtn =
-    "min-w-10 h-10 px-3 rounded-lg text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500";
+    "min-w-10 h-10 px-3 rounded-lg text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand";
 
   return (
     <nav aria-label="Pagination" className="flex items-center justify-center gap-1">
@@ -54,14 +54,14 @@ export default function Pagination({
         onClick={() => onPageChange(currentPage - 1)}
         disabled={isFirst}
         aria-label="Previous page"
-        className={`${baseBtn} text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent`}
+        className={`${baseBtn} text-ink-soft hover:bg-mist disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent`}
       >
         ← Prev
       </button>
 
       {pages.map((page, i) =>
         page === DOTS ? (
-          <span key={`dots-${i}`} className="px-2 text-gray-400 select-none">
+          <span key={`dots-${i}`} className="px-2 text-subtle select-none">
             …
           </span>
         ) : (
@@ -72,8 +72,8 @@ export default function Pagination({
             aria-current={page === currentPage ? "page" : undefined}
             className={`${baseBtn} ${
               page === currentPage
-                ? "bg-indigo-600 text-white"
-                : "text-gray-700 hover:bg-gray-100"
+                ? "bg-brand text-white"
+                : "text-ink-soft hover:bg-mist"
             }`}
           >
             {page}
@@ -85,7 +85,7 @@ export default function Pagination({
         onClick={() => onPageChange(currentPage + 1)}
         disabled={isLast}
         aria-label="Next page"
-        className={`${baseBtn} text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent`}
+        className={`${baseBtn} text-ink-soft hover:bg-mist disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent`}
       >
         Next →
       </button>

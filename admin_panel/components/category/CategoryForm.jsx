@@ -101,18 +101,18 @@ const CategoryForm = ({ initialValues, onSubmit, onCancel }) => {
   };
 
   const inputClass = (field) =>
-    `w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-gray-800 placeholder-gray-400 shadow-sm transition focus:outline-none focus:ring-4 ${
+    `w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-ink placeholder-subtle shadow-sm transition focus:outline-none focus:ring-4 ${
       errors[field]
-        ? "border-red-400 focus:border-red-500 focus:ring-red-100"
-        : "border-gray-300 focus:border-indigo-500 focus:ring-indigo-100"
+        ? "border-danger/60 focus:border-danger focus:ring-danger-50"
+        : "border-line-strong focus:border-brand focus:ring-brand-100"
     }`;
 
-  const cardClass = "rounded-xl border border-gray-200 bg-white shadow-sm";
-  const cardHeaderClass = "flex items-center gap-3 border-b border-gray-100 px-5 py-4";
-  const labelClass = "block text-sm font-medium text-gray-700 mb-1.5";
+  const cardClass = "rounded-xl border border-line bg-white shadow-sm";
+  const cardHeaderClass = "flex items-center gap-3 border-b border-line px-5 py-4";
+  const labelClass = "block text-sm font-medium text-ink-soft mb-1.5";
 
   const CardIcon = ({ children }) => (
-    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50 text-brand">
       {children}
     </span>
   );
@@ -131,14 +131,14 @@ const CategoryForm = ({ initialValues, onSubmit, onCancel }) => {
       <button
         type="button"
         onClick={onCancel}
-        className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
+        className="rounded-lg border border-line-strong bg-white px-4 py-2 text-sm font-medium text-ink-soft shadow-sm transition hover:bg-snow"
       >
         Cancel
       </button>
       <button
         type="submit"
         disabled={submitting}
-        className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:opacity-60"
+        className="inline-flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-brand-dark focus:outline-none focus:ring-4 focus:ring-brand-100 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {submitting && <Spinner />}
         {submitLabel}
@@ -151,19 +151,19 @@ const CategoryForm = ({ initialValues, onSubmit, onCancel }) => {
       {/* Page header */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <nav className="mb-2 flex items-center gap-1.5 text-xs text-gray-500">
-            <button type="button" onClick={onCancel} className="hover:text-indigo-600">
+          <nav className="mb-2 flex items-center gap-1.5 text-xs text-muted">
+            <button type="button" onClick={onCancel} className="hover:text-brand">
               Categories
             </button>
             <span>/</span>
-            <span className="font-medium text-gray-700">
+            <span className="font-medium text-ink-soft">
               {isEditMode ? "Edit" : "New"}
             </span>
           </nav>
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">
+          <h1 className="text-2xl font-semibold tracking-tight text-ink">
             {isEditMode ? "Edit category" : "Add new category"}
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-muted">
             {isEditMode
               ? "Update the details below and save your changes."
               : "Group your products so shoppers can find them faster."}
@@ -176,7 +176,7 @@ const CategoryForm = ({ initialValues, onSubmit, onCancel }) => {
       </div>
 
       {errors.form && (
-        <div className="mb-5 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="mb-5 flex items-start gap-3 rounded-xl border border-danger/30 bg-danger-50 px-4 py-3 text-sm text-danger">
           <svg className="mt-0.5 h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor">
             <path
               fillRule="evenodd"
@@ -200,8 +200,8 @@ const CategoryForm = ({ initialValues, onSubmit, onCancel }) => {
                 </svg>
               </CardIcon>
               <div>
-                <h2 className="text-sm font-semibold text-gray-900">Basic information</h2>
-                <p className="text-xs text-gray-500">Name and describe this category</p>
+                <h2 className="text-sm font-semibold text-ink">Basic information</h2>
+                <p className="text-xs text-muted">Name and describe this category</p>
               </div>
             </div>
 
@@ -209,9 +209,9 @@ const CategoryForm = ({ initialValues, onSubmit, onCancel }) => {
               <div>
                 <div className="flex items-center justify-between">
                   <label className={labelClass}>
-                    Category name <span className="text-red-500">*</span>
+                    Category name <span className="text-danger">*</span>
                   </label>
-                  <span className="mb-1.5 text-xs text-gray-400">
+                  <span className="mb-1.5 text-xs text-subtle">
                     {category.categoryName.length}/{NAME_MAX}
                   </span>
                 </div>
@@ -224,14 +224,14 @@ const CategoryForm = ({ initialValues, onSubmit, onCancel }) => {
                   autoFocus
                 />
                 {errors.categoryName && (
-                  <p className="mt-1.5 text-xs text-red-500">{errors.categoryName}</p>
+                  <p className="mt-1.5 text-xs text-danger">{errors.categoryName}</p>
                 )}
               </div>
 
               <div>
                 <div className="flex items-center justify-between">
                   <label className={labelClass}>Description</label>
-                  <span className="mb-1.5 text-xs text-gray-400">
+                  <span className="mb-1.5 text-xs text-subtle">
                     {category.description.length}/{DESC_MAX}
                   </span>
                 </div>
@@ -255,8 +255,8 @@ const CategoryForm = ({ initialValues, onSubmit, onCancel }) => {
                 </svg>
               </CardIcon>
               <div>
-                <h2 className="text-sm font-semibold text-gray-900">Category image</h2>
-                <p className="text-xs text-gray-500">Optional · shown on the storefront category tile</p>
+                <h2 className="text-sm font-semibold text-ink">Category image</h2>
+                <p className="text-xs text-muted">Optional · shown on the storefront category tile</p>
               </div>
             </div>
 
@@ -270,7 +270,7 @@ const CategoryForm = ({ initialValues, onSubmit, onCancel }) => {
               />
 
               {category.imagePreview ? (
-                <div className="group relative overflow-hidden rounded-xl border border-gray-200">
+                <div className="group relative overflow-hidden rounded-xl border border-line">
                   <img
                     src={category.imagePreview}
                     alt="Category preview"
@@ -280,14 +280,14 @@ const CategoryForm = ({ initialValues, onSubmit, onCancel }) => {
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="rounded-lg bg-white px-3.5 py-2 text-sm font-medium text-gray-800 shadow hover:bg-gray-100"
+                      className="rounded-lg bg-white px-3.5 py-2 text-sm font-medium text-ink shadow hover:bg-mist"
                     >
                       Replace
                     </button>
                     <button
                       type="button"
                       onClick={removeImage}
-                      className="rounded-lg bg-red-600 px-3.5 py-2 text-sm font-medium text-white shadow hover:bg-red-700"
+                      className="rounded-lg bg-danger px-3.5 py-2 text-sm font-medium text-white shadow hover:bg-danger"
                     >
                       Remove
                     </button>
@@ -307,26 +307,26 @@ const CategoryForm = ({ initialValues, onSubmit, onCancel }) => {
                   onDrop={handleDrop}
                   className={`flex h-64 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed transition ${
                     dragging
-                      ? "border-indigo-500 bg-indigo-50"
+                      ? "border-brand bg-brand-50"
                       : errors.image
-                      ? "border-red-300 bg-red-50/40"
-                      : "border-gray-300 bg-gray-50 hover:border-indigo-400 hover:bg-indigo-50/40"
+                      ? "border-danger/40 bg-danger-50/40"
+                      : "border-line-strong bg-snow hover:border-brand/60 hover:bg-brand-50/40"
                   }`}
                 >
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-indigo-600 shadow-sm ring-1 ring-gray-200">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-brand shadow-sm ring-1 ring-line">
                     <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                     </svg>
                   </span>
                   <div className="text-center">
-                    <p className="text-sm text-gray-700">
-                      <span className="font-semibold text-indigo-600">Click to upload</span> or drag and drop
+                    <p className="text-sm text-ink-soft">
+                      <span className="font-semibold text-brand">Click to upload</span> or drag and drop
                     </p>
-                    <p className="mt-1 text-xs text-gray-400">PNG, JPG or WEBP · up to 5MB</p>
+                    <p className="mt-1 text-xs text-subtle">PNG, JPG or WEBP · up to 5MB</p>
                   </div>
                 </div>
               )}
-              {errors.image && <p className="mt-2 text-xs text-red-500">{errors.image}</p>}
+              {errors.image && <p className="mt-2 text-xs text-danger">{errors.image}</p>}
             </div>
           </section>
         </div>
@@ -338,8 +338,8 @@ const CategoryForm = ({ initialValues, onSubmit, onCancel }) => {
             <div className="p-5">
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-sm font-semibold text-gray-900">Visibility</h2>
-                  <p className="mt-0.5 text-xs text-gray-500">
+                  <h2 className="text-sm font-semibold text-ink">Visibility</h2>
+                  <p className="mt-0.5 text-xs text-muted">
                     {category.isActive
                       ? "Visible to shoppers on the store"
                       : "Hidden from the store"}
@@ -350,8 +350,8 @@ const CategoryForm = ({ initialValues, onSubmit, onCancel }) => {
                   role="switch"
                   aria-checked={category.isActive}
                   onClick={() => setCategory((prev) => ({ ...prev, isActive: !prev.isActive }))}
-                  className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition focus:outline-none focus:ring-4 focus:ring-indigo-100 ${
-                    category.isActive ? "bg-indigo-600" : "bg-gray-300"
+                  className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition focus:outline-none focus:ring-4 focus:ring-brand-100 ${
+                    category.isActive ? "bg-brand" : "bg-line-strong"
                   }`}
                 >
                   <span
@@ -364,13 +364,13 @@ const CategoryForm = ({ initialValues, onSubmit, onCancel }) => {
               <span
                 className={`mt-4 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
                   category.isActive
-                    ? "bg-green-50 text-green-700 ring-1 ring-green-200"
-                    : "bg-gray-100 text-gray-600 ring-1 ring-gray-200"
+                    ? "bg-success-50 text-success ring-1 ring-success/30"
+                    : "bg-mist text-muted ring-1 ring-line"
                 }`}
               >
                 <span
                   className={`h-1.5 w-1.5 rounded-full ${
-                    category.isActive ? "bg-green-500" : "bg-gray-400"
+                    category.isActive ? "bg-success" : "bg-line-hover"
                   }`}
                 />
                 {category.isActive ? "Active" : "Inactive"}
@@ -380,12 +380,12 @@ const CategoryForm = ({ initialValues, onSubmit, onCancel }) => {
 
           {/* Live preview */}
           <section className={`${cardClass} lg:sticky lg:top-6`}>
-            <div className="border-b border-gray-100 px-5 py-4">
-              <h2 className="text-sm font-semibold text-gray-900">Live preview</h2>
-              <p className="text-xs text-gray-500">How the tile looks on your store</p>
+            <div className="border-b border-line px-5 py-4">
+              <h2 className="text-sm font-semibold text-ink">Live preview</h2>
+              <p className="text-xs text-muted">How the tile looks on your store</p>
             </div>
             <div className="p-5">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-gradient-to-br from-brand-100 via-brand-50 to-pop-50">
                 {category.imagePreview ? (
                   <img
                     src={category.imagePreview}
@@ -394,14 +394,14 @@ const CategoryForm = ({ initialValues, onSubmit, onCancel }) => {
                   />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <svg className="h-12 w-12 text-indigo-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <svg className="h-12 w-12 text-brand/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                     </svg>
                   </div>
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                 {!category.isActive && (
-                  <span className="absolute right-3 top-3 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-600">
+                  <span className="absolute right-3 top-3 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted">
                     Hidden
                   </span>
                 )}
@@ -420,7 +420,7 @@ const CategoryForm = ({ initialValues, onSubmit, onCancel }) => {
       </div>
 
       {/* Sticky footer actions (mobile) */}
-      <div className="fixed bottom-0 left-0 right-0 flex items-center justify-end gap-3 border-t border-gray-200 bg-white/95 px-4 py-3 backdrop-blur sm:hidden">
+      <div className="fixed bottom-0 left-0 right-0 flex items-center justify-end gap-3 border-t border-line bg-white/95 px-4 py-3 backdrop-blur sm:hidden">
         <ActionButtons />
       </div>
     </form>

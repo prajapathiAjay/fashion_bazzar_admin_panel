@@ -27,8 +27,8 @@ export default function EditCategoryPage() {
     router.push("/category");
   };
 
-  if (isLoading) return <p className="p-6 text-gray-500">Loading category...</p>;
-  if (error || !category) return <p className="p-6 text-red-500">Category not found</p>;
+  if (isLoading) return <p className="p-6 text-muted">Loading category...</p>;
+  if (error || !category) return <p className="p-6 text-danger">Category not found</p>;
 
   return (
     <div className="p-6">

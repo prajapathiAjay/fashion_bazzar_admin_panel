@@ -18,9 +18,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="grid min-h-screen grid-cols-1 lg:grid-cols-2 bg-[#FAFAF8]">
+    <div className="grid min-h-screen grid-cols-1 lg:grid-cols-2 bg-snow">
       {/* Left branding panel */}
-      <div className="relative hidden lg:flex flex-col justify-between bg-[#1B1B1B] p-12 overflow-hidden">
+      <div className="relative hidden lg:flex flex-col justify-between bg-ink p-12 overflow-hidden">
         {/* Subtle decorative texture */}
         <div
           className="absolute inset-0 opacity-[0.06]"
@@ -30,21 +30,21 @@ export default function LoginPage() {
           }}
         />
 
-        <span className="relative font-serif text-2xl tracking-tight text-[#FAFAF8]">
+        <span className="relative font-display text-2xl tracking-tight text-snow">
           Fashion <span className="text-[#C9A0A6]">Bazar</span>
         </span>
 
         <div className="relative max-w-sm">
-          <p className="font-serif text-3xl leading-snug text-[#FAFAF8]">
+          <p className="font-display text-3xl leading-snug text-snow">
             Run your store with clarity, not clutter.
           </p>
-          <p className="mt-4 text-sm text-[#A9A9A3]">
+          <p className="mt-4 text-sm text-subtle">
             Manage products, orders, and customers from a single, focused
             workspace built for Fashion Bazar.
           </p>
         </div>
 
-        <p className="relative text-xs text-[#6B6B66]">
+        <p className="relative text-xs text-muted">
           © {new Date().getFullYear()} Fashion Bazar. All rights reserved.
         </p>
       </div>
@@ -53,12 +53,12 @@ export default function LoginPage() {
       <div className="flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-sm">
           {/* Mobile wordmark */}
-          <span className="mb-10 block font-serif text-xl tracking-tight text-[#1B1B1B] lg:hidden">
-            Fashion <span className="text-[#7A1F2B]">Bazar</span>
+          <span className="mb-10 block font-display text-xl tracking-tight text-ink lg:hidden">
+            Fashion <span className="text-brand">Bazar</span>
           </span>
 
-          <h1 className="font-serif text-2xl text-[#1B1B1B]">Welcome back</h1>
-          <p className="mt-1 text-sm text-[#6B6B66]">
+          <h1 className="font-display text-2xl text-ink">Welcome back</h1>
+          <p className="mt-1 text-sm text-muted">
             Sign in to your admin account to continue.
           </p>
 
@@ -67,7 +67,7 @@ export default function LoginPage() {
             <div>
               <label
                 htmlFor="email"
-                className="mb-1.5 block text-xs font-medium text-[#4A4A46]"
+                className="mb-1.5 block text-xs font-medium text-ink-soft"
               >
                 Email address
               </label>
@@ -78,7 +78,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@fashionbazar.com"
-                className="w-full rounded-md border border-[#E5E3DD] bg-white px-3.5 py-2.5 text-sm text-[#1B1B1B] placeholder:text-[#B5B5AE] outline-none transition-shadow focus:ring-2 focus:ring-[#7A1F2B]/25 focus:border-[#7A1F2B]/50"
+                className="w-full rounded-md border border-line bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-faint outline-none transition-shadow focus:ring-2 focus:ring-brand/25 focus:border-brand/50"
               />
             </div>
 
@@ -87,13 +87,13 @@ export default function LoginPage() {
               <div className="mb-1.5 flex items-center justify-between">
                 <label
                   htmlFor="password"
-                  className="block text-xs font-medium text-[#4A4A46]"
+                  className="block text-xs font-medium text-ink-soft"
                 >
                   Password
                 </label>
                 <a
                   href="#"
-                  className="text-xs text-[#7A1F2B] hover:underline"
+                  className="text-xs text-brand hover:underline"
                 >
                   Forgot password?
                 </a>
@@ -106,12 +106,12 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full rounded-md border border-[#E5E3DD] bg-white px-3.5 py-2.5 pr-10 text-sm text-[#1B1B1B] placeholder:text-[#B5B5AE] outline-none transition-shadow focus:ring-2 focus:ring-[#7A1F2B]/25 focus:border-[#7A1F2B]/50"
+                  className="w-full rounded-md border border-line bg-white px-3.5 py-2.5 pr-10 text-sm text-ink placeholder:text-faint outline-none transition-shadow focus:ring-2 focus:ring-brand/25 focus:border-brand/50"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9A9A93] hover:text-[#4A4A46]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-subtle hover:text-ink-soft"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
@@ -124,10 +124,10 @@ export default function LoginPage() {
             </div>
 
             {/* Remember me */}
-            <label className="flex items-center gap-2 text-sm text-[#4A4A46]">
+            <label className="flex items-center gap-2 text-sm text-ink-soft">
               <input
                 type="checkbox"
-                className="h-4 w-4 rounded border-[#E5E3DD] text-[#7A1F2B] focus:ring-[#7A1F2B]/30"
+                className="h-4 w-4 rounded border-line text-brand focus:ring-brand/30"
               />
               Keep me signed in
             </label>
@@ -135,7 +135,7 @@ export default function LoginPage() {
             {/* Submit */}
             <button
               type="submit"
-              className="group flex w-full items-center justify-center gap-2 rounded-md bg-[#1B1B1B] py-2.5 text-sm font-medium text-[#FAFAF8] transition-colors hover:bg-[#7A1F2B]"
+              className="group flex w-full items-center justify-center gap-2 rounded-md bg-ink py-2.5 text-sm font-medium text-snow transition-colors hover:bg-brand"
             >
               Sign in
               <ArrowRight
@@ -146,7 +146,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <p className="mt-8 text-center text-xs text-[#9A9A93]">
+          <p className="mt-8 text-center text-xs text-subtle">
             Having trouble signing in? Contact your store owner.
           </p>
         </div>

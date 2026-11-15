@@ -37,9 +37,9 @@ export default function AnalyticsPage() {
       {/* Header */}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-medium uppercase tracking-wider text-[#A6A69C]">Insights</p>
-          <h1 className="mt-1 font-serif text-3xl tracking-tight text-[#2A2A28]">Analytics</h1>
-          <p className="mt-1 flex items-center gap-1.5 text-sm text-[#6B6B63]">
+          <p className="text-xs font-medium uppercase tracking-wider text-subtle">Insights</p>
+          <h1 className="mt-1 font-display text-3xl tracking-tight text-ink">Analytics</h1>
+          <p className="mt-1 flex items-center gap-1.5 text-sm text-muted">
             <CalendarDays size={14} strokeWidth={1.75} />
             Last {rangeLabel}, compared with the previous {rangeLabel}
           </p>
@@ -47,7 +47,7 @@ export default function AnalyticsPage() {
 
         <div className="flex flex-wrap items-center gap-3">
           <RangeTabs ranges={RANGES} value={range} onChange={setRange} />
-          <button className="inline-flex items-center gap-2 rounded-lg border border-[#E8E4DC] bg-white px-3.5 py-2 text-sm font-medium text-[#2A2A28] transition-colors hover:bg-[#F5F1E8]">
+          <button className="inline-flex items-center gap-2 rounded-lg border border-line bg-white px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:bg-mist">
             <Download size={15} strokeWidth={1.75} />
             Export report
           </button>

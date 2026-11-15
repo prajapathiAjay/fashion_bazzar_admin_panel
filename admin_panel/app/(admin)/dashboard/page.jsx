@@ -41,23 +41,23 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p suppressHydrationWarning className="text-xs font-medium uppercase tracking-wider text-[#A6A69C]">
+          <p suppressHydrationWarning className="text-xs font-medium uppercase tracking-wider text-subtle">
             {today}
           </p>
-          <h1 className="mt-1 font-serif text-3xl tracking-tight text-[#2A2A28]">Good to see you, Admin</h1>
-          <p className="mt-1 text-sm text-[#6B6B63]">Here&apos;s how Fashion Bazar is performing.</p>
+          <h1 className="mt-1 font-display text-3xl tracking-tight text-ink">Good to see you, Admin</h1>
+          <p className="mt-1 text-sm text-muted">Here&apos;s how Fashion Bazar is performing.</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
           <RangeTabs ranges={RANGES} value={range} onChange={setRange} />
 
-          <button className="inline-flex items-center gap-2 rounded-lg border border-[#E8E4DC] bg-white px-3.5 py-2 text-sm font-medium text-[#2A2A28] transition-colors hover:bg-[#F5F1E8]">
+          <button className="inline-flex items-center gap-2 rounded-lg border border-line bg-white px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:bg-mist">
             <Download size={15} strokeWidth={1.75} />
             Export
           </button>
           <Link
             href="/products/new"
-            className="inline-flex items-center gap-2 rounded-lg bg-[#2A2A28] px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-black"
+            className="inline-flex items-center gap-2 rounded-lg bg-ink px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-black"
           >
             <Plus size={15} strokeWidth={2} />
             Add Product

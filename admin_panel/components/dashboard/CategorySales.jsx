@@ -9,15 +9,15 @@ export default function CategorySales({ data }) {
       {data.map((d) => (
         <li key={d.name} className="group" title={`${d.name}: ${formatCurrency(d.revenue)}`}>
           <div className="mb-1.5 flex items-baseline justify-between text-sm">
-            <span className="text-[#2A2A28]">{d.name}</span>
-            <span className="tabular-nums text-[#6B6B63]">
+            <span className="text-ink">{d.name}</span>
+            <span className="tabular-nums text-muted">
               {formatCompactINR(d.revenue)}
-              <span className="ml-2 text-xs text-[#A6A69C]">{((d.revenue / total) * 100).toFixed(0)}%</span>
+              <span className="ml-2 text-xs text-subtle">{((d.revenue / total) * 100).toFixed(0)}%</span>
             </span>
           </div>
-          <div className="h-2 rounded-full bg-[#F3F0EA]">
+          <div className="h-2 rounded-full bg-mist">
             <div
-              className="h-2 rounded-full bg-[#7A1F2B] transition-opacity group-hover:opacity-80"
+              className="h-2 rounded-full bg-brand transition-opacity group-hover:opacity-80"
               style={{ width: `${(d.revenue / max) * 100}%` }}
             />
           </div>

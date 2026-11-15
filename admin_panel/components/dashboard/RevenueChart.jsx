@@ -49,23 +49,23 @@ export default function RevenueChart({ series }) {
     <div>
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-2xl font-semibold tracking-tight text-[#2A2A28] tabular-nums">
+          <p className="text-2xl font-semibold tracking-tight text-ink tabular-nums">
             {formatCurrency(totalCurrent)}
           </p>
-          <p className="mt-0.5 text-xs text-[#8A8A80]">
-            <span className={`font-medium ${growth >= 0 ? "text-emerald-700" : "text-red-700"}`}>
+          <p className="mt-0.5 text-xs text-subtle">
+            <span className={`font-medium ${growth >= 0 ? "text-success" : "text-danger"}`}>
               {growth >= 0 ? "+" : ""}
               {growth}%
             </span>{" "}
             compared to previous period
           </p>
         </div>
-        <div className="flex items-center gap-4 text-xs text-[#6B6B63]">
+        <div className="flex items-center gap-4 text-xs text-muted">
           <span className="flex items-center gap-1.5">
-            <span className="h-0.5 w-4 rounded bg-[#7A1F2B]" /> This period
+            <span className="h-0.5 w-4 rounded bg-brand" /> This period
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="h-0 w-4 border-t-2 border-dashed border-[#B8B2A6]" /> Previous period
+            <span className="h-0 w-4 border-t-2 border-dashed border-faint" /> Previous period
           </span>
         </div>
       </div>
@@ -82,15 +82,15 @@ export default function RevenueChart({ series }) {
           >
             <defs>
               <linearGradient id="rev-fill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#7A1F2B" stopOpacity="0.14" />
-                <stop offset="100%" stopColor="#7A1F2B" stopOpacity="0" />
+                <stop offset="0%" stopColor="#7B2D3D" stopOpacity="0.14" />
+                <stop offset="100%" stopColor="#7B2D3D" stopOpacity="0" />
               </linearGradient>
             </defs>
 
             {ticks.map((t) => (
               <g key={t}>
-                <line x1={PAD.left} x2={width - PAD.right} y1={y(t)} y2={y(t)} stroke="#EFECE5" />
-                <text x={PAD.left - 10} y={y(t)} dy="0.32em" textAnchor="end" className="fill-[#A6A69C] text-[11px]">
+                <line x1={PAD.left} x2={width - PAD.right} y1={y(t)} y2={y(t)} stroke="#EFE8E0" />
+                <text x={PAD.left - 10} y={y(t)} dy="0.32em" textAnchor="end" className="fill-subtle text-[11px]">
                   {formatCompactINR(t)}
                 </text>
               </g>
@@ -98,21 +98,21 @@ export default function RevenueChart({ series }) {
 
             {labels.map((l, i) =>
               i % labelEvery === 0 ? (
-                <text key={i} x={x(i)} y={HEIGHT - 8} textAnchor="middle" className="fill-[#A6A69C] text-[11px]">
+                <text key={i} x={x(i)} y={HEIGHT - 8} textAnchor="middle" className="fill-subtle text-[11px]">
                   {l}
                 </text>
               ) : null
             )}
 
-            <path d={path(previous)} fill="none" stroke="#B8B2A6" strokeWidth="2" strokeDasharray="4 4" />
+            <path d={path(previous)} fill="none" stroke="#BEB5AC" strokeWidth="2" strokeDasharray="4 4" />
             <path d={`${path(current)} L${x(labels.length - 1)},${y(0)} L${x(0)},${y(0)} Z`} fill="url(#rev-fill)" />
-            <path d={path(current)} fill="none" stroke="#7A1F2B" strokeWidth="2" strokeLinejoin="round" />
+            <path d={path(current)} fill="none" stroke="#7B2D3D" strokeWidth="2" strokeLinejoin="round" />
 
             {active !== null && (
               <g>
-                <line x1={x(active)} x2={x(active)} y1={PAD.top} y2={PAD.top + innerH} stroke="#D6D1C6" />
-                <circle cx={x(active)} cy={y(previous[active])} r="4" fill="#B8B2A6" stroke="#fff" strokeWidth="2" />
-                <circle cx={x(active)} cy={y(current[active])} r="5" fill="#7A1F2B" stroke="#fff" strokeWidth="2" />
+                <line x1={x(active)} x2={x(active)} y1={PAD.top} y2={PAD.top + innerH} stroke="#D1C6BA" />
+                <circle cx={x(active)} cy={y(previous[active])} r="4" fill="#BEB5AC" stroke="#fff" strokeWidth="2" />
+                <circle cx={x(active)} cy={y(current[active])} r="5" fill="#7B2D3D" stroke="#fff" strokeWidth="2" />
               </g>
             )}
           </svg>
@@ -120,24 +120,24 @@ export default function RevenueChart({ series }) {
 
         {active !== null && (
           <div
-            className="pointer-events-none absolute top-2 z-10 min-w-[170px] rounded-lg border border-[#E8E4DC] bg-white px-3 py-2.5 text-xs shadow-lg"
+            className="pointer-events-none absolute top-2 z-10 min-w-[170px] rounded-lg border border-line bg-white px-3 py-2.5 text-xs shadow-lg"
             style={{
               left: x(active),
               transform: `translateX(${x(active) > width / 2 ? "calc(-100% - 12px)" : "12px"})`,
             }}
           >
-            <p className="mb-1.5 font-medium text-[#2A2A28]">{labels[active]}</p>
-            <div className="flex items-center justify-between gap-4 text-[#6B6B63]">
+            <p className="mb-1.5 font-medium text-ink">{labels[active]}</p>
+            <div className="flex items-center justify-between gap-4 text-muted">
               <span className="flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-[#7A1F2B]" /> This period
+                <span className="h-2 w-2 rounded-full bg-brand" /> This period
               </span>
-              <span className="font-medium text-[#2A2A28] tabular-nums">{formatCurrency(current[active])}</span>
+              <span className="font-medium text-ink tabular-nums">{formatCurrency(current[active])}</span>
             </div>
-            <div className="mt-1 flex items-center justify-between gap-4 text-[#6B6B63]">
+            <div className="mt-1 flex items-center justify-between gap-4 text-muted">
               <span className="flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-[#B8B2A6]" /> Previous
+                <span className="h-2 w-2 rounded-full bg-faint" /> Previous
               </span>
-              <span className="font-medium text-[#2A2A28] tabular-nums">{formatCurrency(previous[active])}</span>
+              <span className="font-medium text-ink tabular-nums">{formatCurrency(previous[active])}</span>
             </div>
           </div>
         )}

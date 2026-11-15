@@ -12,7 +12,7 @@ export default function CohortTable({ cohorts }) {
     <div className="-mx-5 -mb-5 overflow-x-auto px-5 pb-5">
       <table className="w-full min-w-[720px] border-separate text-sm" style={{ borderSpacing: 3 }}>
         <thead>
-          <tr className="text-[11px] font-medium uppercase tracking-wide text-[#A6A69C]">
+          <tr className="text-[11px] font-medium uppercase tracking-wide text-subtle">
             <th className="pb-2 text-left font-medium">Cohort</th>
             <th className="pb-2 text-right font-medium">Customers</th>
             {Array.from({ length: months }, (_, i) => (
@@ -25,12 +25,12 @@ export default function CohortTable({ cohorts }) {
         <tbody>
           {cohorts.map((c) => (
             <tr key={c.cohort}>
-              <td className="whitespace-nowrap pr-4 text-[#2A2A28]">{c.cohort}</td>
-              <td className="pr-4 text-right tabular-nums text-[#6B6B63]">{formatNumber(c.size)}</td>
+              <td className="whitespace-nowrap pr-4 text-ink">{c.cohort}</td>
+              <td className="pr-4 text-right tabular-nums text-muted">{formatNumber(c.size)}</td>
               {Array.from({ length: months }, (_, i) => {
                 const v = c.retention[i];
-                if (v === undefined) return <td key={i} className="h-9 rounded-[4px] bg-[#FAFAF8]" />;
-                const { bg, fg } = i === 0 ? { bg: "#F3F0EA", fg: "#6B6B63" } : rampStep(v, min, max);
+                if (v === undefined) return <td key={i} className="h-9 rounded-[4px] bg-snow" />;
+                const { bg, fg } = i === 0 ? { bg: "#F7F3EE", fg: "#6B625B" } : rampStep(v, min, max);
                 return (
                   <td
                     key={i}

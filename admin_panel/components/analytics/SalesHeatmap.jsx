@@ -21,12 +21,12 @@ export default function SalesHeatmap({ data }) {
 
   return (
     <div>
-      <p className="mb-4 text-xs text-[#8A8A80]">
+      <p className="mb-4 text-xs text-subtle">
         {hover ? "Selected" : "Peak"}:{" "}
-        <span className="font-medium text-[#2A2A28]">
+        <span className="font-medium text-ink">
           {data.days[active.d]}, {data.slots[active.s]}–{data.slots[(active.s + 1) % data.slots.length]}
         </span>{" "}
-        · <span className="font-medium tabular-nums text-[#2A2A28]">{data.values[active.d][active.s]}</span> orders
+        · <span className="font-medium tabular-nums text-ink">{data.values[active.d][active.s]}</span> orders
       </p>
 
       <div className="overflow-x-auto">
@@ -35,7 +35,7 @@ export default function SalesHeatmap({ data }) {
             <tr>
               <th className="w-10" />
               {data.slots.map((s) => (
-                <th key={s} className="pb-1 text-[11px] font-normal text-[#A6A69C]">
+                <th key={s} className="pb-1 text-[11px] font-normal text-subtle">
                   {s}
                 </th>
               ))}
@@ -44,7 +44,7 @@ export default function SalesHeatmap({ data }) {
           <tbody onMouseLeave={() => setHover(null)}>
             {data.days.map((day, d) => (
               <tr key={day}>
-                <th className="pr-2 text-left text-[11px] font-normal text-[#A6A69C]">{day}</th>
+                <th className="pr-2 text-left text-[11px] font-normal text-subtle">{day}</th>
                 {data.values[d].map((v, s) => {
                   const { bg, fg } = rampStep(v, min, max);
                   const isActive = hover && hover.d === d && hover.s === s;
@@ -54,7 +54,7 @@ export default function SalesHeatmap({ data }) {
                       onMouseEnter={() => setHover({ d, s })}
                       title={`${day} ${data.slots[s]}: ${v} orders`}
                       className={`h-9 rounded-[4px] text-center text-[11px] tabular-nums transition-shadow ${
-                        isActive ? "ring-2 ring-[#2A2A28] ring-offset-1" : ""
+                        isActive ? "ring-2 ring-ink ring-offset-1" : ""
                       }`}
                       style={{ backgroundColor: bg, color: fg }}
                     >
@@ -69,7 +69,7 @@ export default function SalesHeatmap({ data }) {
       </div>
 
       {/* Scale legend */}
-      <div className="mt-4 flex items-center justify-end gap-2 text-[11px] text-[#A6A69C]">
+      <div className="mt-4 flex items-center justify-end gap-2 text-[11px] text-subtle">
         <span>Fewer</span>
         <div className="flex gap-[2px]">
           {RAMP.map((c) => (

@@ -64,21 +64,21 @@ const nextImageKey = () => `img-${++imageKey}`;
 
 // ---- Presentational helpers (declared outside the form so React doesn't remount them) ----
 const CardHeader = ({ icon, title, subtitle }) => (
-  <div className="flex items-center gap-3 border-b border-gray-100 px-5 py-4">
-    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+  <div className="flex items-center gap-3 border-b border-line px-5 py-4">
+    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50 text-brand">
       <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d={icon} />
       </svg>
     </span>
     <div>
-      <h2 className="text-sm font-semibold text-gray-900">{title}</h2>
-      {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
+      <h2 className="text-sm font-semibold text-ink">{title}</h2>
+      {subtitle && <p className="text-xs text-muted">{subtitle}</p>}
     </div>
   </div>
 );
 
 const FieldError = ({ message }) =>
-  message ? <p className="mt-1.5 text-xs text-red-500">{message}</p> : null;
+  message ? <p className="mt-1.5 text-xs text-danger">{message}</p> : null;
 
 const RemoveX = ({ onClick, label }) => (
   <button
@@ -105,14 +105,14 @@ const ActionButtons = ({ onCancel, submitting, label }) => (
     <button
       type="button"
       onClick={onCancel}
-      className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
+      className="rounded-lg border border-line-strong bg-white px-4 py-2 text-sm font-medium text-ink-soft shadow-sm transition hover:bg-snow"
     >
       Cancel
     </button>
     <button
       type="submit"
       disabled={submitting}
-      className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:opacity-60"
+      className="inline-flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-brand-dark focus:outline-none focus:ring-4 focus:ring-brand-100 disabled:cursor-not-allowed disabled:opacity-60"
     >
       {submitting && <Spinner />}
       {label}
@@ -289,19 +289,19 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
 
   // ---- Styles ----
   const inputClass = (field) =>
-    `w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-gray-800 placeholder-gray-400 shadow-sm transition focus:outline-none focus:ring-4 ${
+    `w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-ink placeholder-subtle shadow-sm transition focus:outline-none focus:ring-4 ${
       errors[field]
-        ? "border-red-400 focus:border-red-500 focus:ring-red-100"
-        : "border-gray-300 focus:border-indigo-500 focus:ring-indigo-100"
+        ? "border-danger/60 focus:border-danger focus:ring-danger-50"
+        : "border-line-strong focus:border-brand focus:ring-brand-100"
     }`;
 
-  const cardClass = "rounded-xl border border-gray-200 bg-white shadow-sm";
-  const labelClass = "block text-sm font-medium text-gray-700 mb-1.5";
+  const cardClass = "rounded-xl border border-line bg-white shadow-sm";
+  const labelClass = "block text-sm font-medium text-ink-soft mb-1.5";
   const chipClass = (active) =>
     `rounded-lg border px-3 py-1.5 text-sm font-medium transition ${
       active
-        ? "border-indigo-600 bg-indigo-600 text-white shadow-sm"
-        : "border-gray-300 bg-white text-gray-700 hover:border-indigo-400 hover:text-indigo-600"
+        ? "border-brand bg-brand text-white shadow-sm"
+        : "border-line-strong bg-white text-ink-soft hover:border-brand/60 hover:text-brand"
     }`;
 
   const submitLabel = submitting ? "Saving..." : isEditMode ? "Save changes" : "Save product";
@@ -311,17 +311,17 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
       {/* Page header */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <nav className="mb-2 flex items-center gap-1.5 text-xs text-gray-500">
-            <button type="button" onClick={onCancel} className="hover:text-indigo-600">
+          <nav className="mb-2 flex items-center gap-1.5 text-xs text-muted">
+            <button type="button" onClick={onCancel} className="hover:text-brand">
               Products
             </button>
             <span>/</span>
-            <span className="font-medium text-gray-700">{isEditMode ? "Edit" : "New"}</span>
+            <span className="font-medium text-ink-soft">{isEditMode ? "Edit" : "New"}</span>
           </nav>
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">
+          <h1 className="text-2xl font-semibold tracking-tight text-ink">
             {isEditMode ? "Edit product" : "Add new product"}
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-muted">
             {isEditMode
               ? "Update the details below and save your changes."
               : "Fill in the details below to add a new product to your catalog."}
@@ -334,7 +334,7 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
       </div>
 
       {errors.form && (
-        <div className="mb-5 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="mb-5 flex items-start gap-3 rounded-xl border border-danger/30 bg-danger-50 px-4 py-3 text-sm text-danger">
           <svg className="mt-0.5 h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor">
             <path
               fillRule="evenodd"
@@ -362,9 +362,9 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
                 <div className="sm:col-span-2">
                   <div className="flex items-center justify-between">
                     <label className={labelClass}>
-                      Product name <span className="text-red-500">*</span>
+                      Product name <span className="text-danger">*</span>
                     </label>
-                    <span className="mb-1.5 text-xs text-gray-400">
+                    <span className="mb-1.5 text-xs text-subtle">
                       {product.name.length}/{NAME_MAX}
                     </span>
                   </div>
@@ -394,9 +394,9 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
               <div>
                 <div className="flex items-center justify-between">
                   <label className={labelClass}>
-                    Summary <span className="text-red-500">*</span>
+                    Summary <span className="text-danger">*</span>
                   </label>
-                  <span className="mb-1.5 text-xs text-gray-400">
+                  <span className="mb-1.5 text-xs text-subtle">
                     {product.summary.length}/{SUMMARY_MAX}
                   </span>
                 </div>
@@ -413,9 +413,9 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
               <div>
                 <div className="flex items-center justify-between">
                   <label className={labelClass}>
-                    Description <span className="text-red-500">*</span>
+                    Description <span className="text-danger">*</span>
                   </label>
-                  <span className="mb-1.5 text-xs text-gray-400">
+                  <span className="mb-1.5 text-xs text-subtle">
                     {product.description.length}/{DESC_MAX}
                   </span>
                 </div>
@@ -464,22 +464,22 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
                   images.length ? "h-32" : "h-56"
                 } ${
                   dragging
-                    ? "border-indigo-500 bg-indigo-50"
+                    ? "border-brand bg-brand-50"
                     : errors.images
-                    ? "border-red-300 bg-red-50/40"
-                    : "border-gray-300 bg-gray-50 hover:border-indigo-400 hover:bg-indigo-50/40"
+                    ? "border-danger/40 bg-danger-50/40"
+                    : "border-line-strong bg-snow hover:border-brand/60 hover:bg-brand-50/40"
                 }`}
               >
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-indigo-600 shadow-sm ring-1 ring-gray-200">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-brand shadow-sm ring-1 ring-line">
                   <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                   </svg>
                 </span>
                 <div className="text-center">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-semibold text-indigo-600">Click to upload</span> or drag and drop
+                  <p className="text-sm text-ink-soft">
+                    <span className="font-semibold text-brand">Click to upload</span> or drag and drop
                   </p>
-                  <p className="mt-1 text-xs text-gray-400">
+                  <p className="mt-1 text-xs text-subtle">
                     PNG, JPG or WEBP · up to 5MB each · {images.length}/{MAX_IMAGES} added
                   </p>
                 </div>
@@ -491,11 +491,11 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
                   {images.map((img, i) => (
                     <li
                       key={img.key}
-                      className="group relative aspect-square overflow-hidden rounded-lg border border-gray-200 bg-gray-50"
+                      className="group relative aspect-square overflow-hidden rounded-lg border border-line bg-snow"
                     >
                       <img src={img.preview} alt={`Product image ${i + 1}`} className="h-full w-full object-cover" />
                       {i === 0 && (
-                        <span className="absolute left-2 top-2 rounded-full bg-indigo-600 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                        <span className="absolute left-2 top-2 rounded-full bg-brand px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
                           Cover
                         </span>
                       )}
@@ -504,7 +504,7 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
                           <button
                             type="button"
                             onClick={() => makeCover(img.key)}
-                            className="rounded-md bg-white px-2.5 py-1 text-xs font-medium text-gray-800 shadow hover:bg-gray-100"
+                            className="rounded-md bg-white px-2.5 py-1 text-xs font-medium text-ink shadow hover:bg-mist"
                           >
                             Make cover
                           </button>
@@ -512,7 +512,7 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
                         <button
                           type="button"
                           onClick={() => removeImage(img.key)}
-                          className="rounded-md bg-red-600 px-2.5 py-1 text-xs font-medium text-white shadow hover:bg-red-700"
+                          className="rounded-md bg-danger px-2.5 py-1 text-xs font-medium text-white shadow hover:bg-danger"
                         >
                           Remove
                         </button>
@@ -536,10 +536,10 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
                 <div>
                   <label className={labelClass}>
-                    Price <span className="text-red-500">*</span>
+                    Price <span className="text-danger">*</span>
                   </label>
                   <div className="relative">
-                    <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-gray-400">
+                    <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-subtle">
                       ₹
                     </span>
                     <input
@@ -570,7 +570,7 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
                       placeholder="0"
                       className={`${inputClass("discount")} pr-9`}
                     />
-                    <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-sm text-gray-400">
+                    <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-sm text-subtle">
                       %
                     </span>
                   </div>
@@ -595,15 +595,15 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
               </div>
 
               {priceNum > 0 && (
-                <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-gray-50 px-4 py-3 text-sm ring-1 ring-gray-200">
-                  <span className="text-gray-600">Customer pays</span>
+                <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-snow px-4 py-3 text-sm ring-1 ring-line">
+                  <span className="text-muted">Customer pays</span>
                   <span className="flex items-baseline gap-2">
                     {discountNum > 0 && (
-                      <span className="text-xs text-gray-400 line-through">{formatCurrency(priceNum)}</span>
+                      <span className="text-xs text-subtle line-through">{formatCurrency(priceNum)}</span>
                     )}
-                    <span className="text-base font-semibold text-gray-900">{formatCurrency(finalPrice)}</span>
+                    <span className="text-base font-semibold text-ink">{formatCurrency(finalPrice)}</span>
                     {discountNum > 0 && (
-                      <span className="rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700 ring-1 ring-green-200">
+                      <span className="rounded-full bg-success-50 px-2 py-0.5 text-xs font-medium text-success ring-1 ring-success/30">
                         {discountNum}% off
                       </span>
                     )}
@@ -642,7 +642,7 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
                     .map((size) => (
                       <span
                         key={size}
-                        className="inline-flex items-center gap-1 rounded-lg border border-indigo-600 bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm"
+                        className="inline-flex items-center gap-1 rounded-lg border border-brand bg-brand px-3 py-1.5 text-sm font-medium text-white shadow-sm"
                       >
                         {size}
                         <RemoveX label={`Remove size ${size}`} onClick={() => toggleInList("sizes", size)} />
@@ -661,7 +661,7 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
                   <button
                     type="button"
                     onClick={() => addTag("sizes", sizeInput, setSizeInput)}
-                    className="shrink-0 rounded-lg border border-gray-300 bg-white px-3.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+                    className="shrink-0 rounded-lg border border-line-strong bg-white px-3.5 text-sm font-medium text-ink-soft shadow-sm hover:bg-snow"
                   >
                     Add
                   </button>
@@ -672,13 +672,13 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
               <div>
                 <label className={labelClass}>Colours</label>
                 <div
-                  className="flex min-h-11 flex-wrap items-center gap-2 rounded-lg border border-gray-300 bg-white px-2.5 py-2 shadow-sm transition focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-100"
+                  className="flex min-h-11 flex-wrap items-center gap-2 rounded-lg border border-line-strong bg-white px-2.5 py-2 shadow-sm transition focus-within:border-brand focus-within:ring-4 focus-within:ring-brand-100"
                   onClick={(e) => e.currentTarget.querySelector("input")?.focus()}
                 >
                   {product.colors.map((color) => (
                     <span
                       key={color}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 py-1 pl-1.5 pr-2 text-xs font-medium text-gray-700 ring-1 ring-gray-200"
+                      className="inline-flex items-center gap-1.5 rounded-full bg-mist py-1 pl-1.5 pr-2 text-xs font-medium text-ink-soft ring-1 ring-line"
                     >
                       <span
                         className="h-3.5 w-3.5 rounded-full ring-1 ring-black/10"
@@ -695,10 +695,10 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
                     onKeyDown={tagKeyDown("colors", colorInput, setColorInput)}
                     onBlur={() => addTag("colors", colorInput, setColorInput)}
                     placeholder={product.colors.length ? "Add another..." : "Type a colour and press Enter, e.g. Black, Navy"}
-                    className="min-w-40 flex-1 border-0 bg-transparent px-1 py-0.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none"
+                    className="min-w-40 flex-1 border-0 bg-transparent px-1 py-0.5 text-sm text-ink placeholder-subtle focus:outline-none"
                   />
                 </div>
-                <p className="mt-1.5 text-xs text-gray-400">Press Enter or comma to add · Backspace removes the last one</p>
+                <p className="mt-1.5 text-xs text-subtle">Press Enter or comma to add · Backspace removes the last one</p>
               </div>
             </div>
           </section>
@@ -711,8 +711,8 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
             <div className="p-5">
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-sm font-semibold text-gray-900">Visibility</h2>
-                  <p className="mt-0.5 text-xs text-gray-500">
+                  <h2 className="text-sm font-semibold text-ink">Visibility</h2>
+                  <p className="mt-0.5 text-xs text-muted">
                     {product.isActive ? "Visible to shoppers on the store" : "Hidden from the store"}
                   </p>
                 </div>
@@ -722,8 +722,8 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
                   aria-checked={product.isActive}
                   aria-label="Product visibility"
                   onClick={() => setField("isActive", !product.isActive)}
-                  className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition focus:outline-none focus:ring-4 focus:ring-indigo-100 ${
-                    product.isActive ? "bg-indigo-600" : "bg-gray-300"
+                  className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition focus:outline-none focus:ring-4 focus:ring-brand-100 ${
+                    product.isActive ? "bg-brand" : "bg-line-strong"
                   }`}
                 >
                   <span
@@ -736,11 +736,11 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
               <span
                 className={`mt-4 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
                   product.isActive
-                    ? "bg-green-50 text-green-700 ring-1 ring-green-200"
-                    : "bg-gray-100 text-gray-600 ring-1 ring-gray-200"
+                    ? "bg-success-50 text-success ring-1 ring-success/30"
+                    : "bg-mist text-muted ring-1 ring-line"
                 }`}
               >
-                <span className={`h-1.5 w-1.5 rounded-full ${product.isActive ? "bg-green-500" : "bg-gray-400"}`} />
+                <span className={`h-1.5 w-1.5 rounded-full ${product.isActive ? "bg-success" : "bg-line-hover"}`} />
                 {product.isActive ? "Active" : "Inactive"}
               </span>
             </div>
@@ -748,11 +748,11 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
 
           {/* Categories */}
           <section className={cardClass}>
-            <div className="border-b border-gray-100 px-5 py-4">
-              <h2 className="text-sm font-semibold text-gray-900">
-                Categories <span className="text-red-500">*</span>
+            <div className="border-b border-line px-5 py-4">
+              <h2 className="text-sm font-semibold text-ink">
+                Categories <span className="text-danger">*</span>
               </h2>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted">
                 {product.categories.length
                   ? `${product.categories.length} selected`
                   : "Where shoppers will find this product"}
@@ -760,9 +760,9 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
             </div>
             <div className="p-5">
               {categoriesLoading ? (
-                <p className="text-sm text-gray-400">Loading categories...</p>
+                <p className="text-sm text-subtle">Loading categories...</p>
               ) : allCategories.length === 0 ? (
-                <p className="text-sm text-gray-500">No categories yet. Create one first.</p>
+                <p className="text-sm text-muted">No categories yet. Create one first.</p>
               ) : (
                 <ul className="max-h-64 space-y-1 overflow-y-auto">
                   {allCategories.map((c) => {
@@ -771,18 +771,18 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
                       <li key={c._id}>
                         <label
                           className={`flex cursor-pointer items-center gap-3 rounded-lg px-2.5 py-2 text-sm transition ${
-                            checked ? "bg-indigo-50 text-indigo-700" : "text-gray-700 hover:bg-gray-50"
+                            checked ? "bg-brand-50 text-brand-dark" : "text-ink-soft hover:bg-snow"
                           }`}
                         >
                           <input
                             type="checkbox"
                             checked={checked}
                             onChange={() => toggleInList("categories", c._id)}
-                            className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                            className="h-4 w-4 rounded border-line-strong text-brand focus:ring-brand"
                           />
                           <span className="flex-1 truncate">{c.categoryName}</span>
                           {c.isActive === false && (
-                            <span className="text-[10px] font-medium uppercase text-gray-400">Hidden</span>
+                            <span className="text-[10px] font-medium uppercase text-subtle">Hidden</span>
                           )}
                         </label>
                       </li>
@@ -796,53 +796,53 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
 
           {/* Live preview */}
           <section className={`${cardClass} lg:sticky lg:top-6`}>
-            <div className="border-b border-gray-100 px-5 py-4">
-              <h2 className="text-sm font-semibold text-gray-900">Live preview</h2>
-              <p className="text-xs text-gray-500">How the card looks on your store</p>
+            <div className="border-b border-line px-5 py-4">
+              <h2 className="text-sm font-semibold text-ink">Live preview</h2>
+              <p className="text-xs text-muted">How the card looks on your store</p>
             </div>
             <div className="p-5">
-              <div className="overflow-hidden rounded-xl ring-1 ring-gray-200">
-                <div className="relative aspect-[4/5] bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100">
+              <div className="overflow-hidden rounded-xl ring-1 ring-line">
+                <div className="relative aspect-[4/5] bg-gradient-to-br from-brand-100 via-brand-50 to-pop-50">
                   {coverImage ? (
                     <img src={coverImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <svg className="h-12 w-12 text-indigo-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <svg className="h-12 w-12 text-brand/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                       </svg>
                     </div>
                   )}
                   {discountNum > 0 && (
-                    <span className="absolute left-3 top-3 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-semibold text-white">
+                    <span className="absolute left-3 top-3 rounded-full bg-danger px-2 py-0.5 text-[10px] font-semibold text-white">
                       -{discountNum}%
                     </span>
                   )}
                   {!product.isActive ? (
-                    <span className="absolute right-3 top-3 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-600">
+                    <span className="absolute right-3 top-3 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted">
                       Hidden
                     </span>
                   ) : product.stock !== "" && stockNum === 0 ? (
-                    <span className="absolute right-3 top-3 rounded-full bg-gray-900/80 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                    <span className="absolute right-3 top-3 rounded-full bg-ink/80 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
                       Sold out
                     </span>
                   ) : null}
                 </div>
                 <div className="space-y-1.5 p-4">
                   {(product.brand.trim() || selectedCategoryNames.length > 0) && (
-                    <p className="truncate text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                    <p className="truncate text-[11px] font-medium uppercase tracking-wide text-subtle">
                       {[product.brand.trim(), selectedCategoryNames[0]].filter(Boolean).join(" · ")}
                     </p>
                   )}
-                  <h3 className="truncate text-sm font-semibold text-gray-900">
+                  <h3 className="truncate text-sm font-semibold text-ink">
                     {product.name.trim() || "Product name"}
                   </h3>
-                  <p className="line-clamp-2 text-xs text-gray-500">
+                  <p className="line-clamp-2 text-xs text-muted">
                     {product.summary.trim() || "Your product summary will appear here."}
                   </p>
                   <div className="flex items-baseline gap-2 pt-1">
-                    <span className="text-sm font-semibold text-gray-900">{formatCurrency(finalPrice)}</span>
+                    <span className="text-sm font-semibold text-ink">{formatCurrency(finalPrice)}</span>
                     {discountNum > 0 && (
-                      <span className="text-xs text-gray-400 line-through">{formatCurrency(priceNum)}</span>
+                      <span className="text-xs text-subtle line-through">{formatCurrency(priceNum)}</span>
                     )}
                   </div>
                   {(product.colors.length > 0 || product.sizes.length > 0) && (
@@ -857,7 +857,7 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
                           />
                         ))}
                       </div>
-                      <span className="truncate text-[11px] text-gray-500">{product.sizes.join(" · ")}</span>
+                      <span className="truncate text-[11px] text-muted">{product.sizes.join(" · ")}</span>
                     </div>
                   )}
                 </div>
@@ -868,7 +868,7 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
       </div>
 
       {/* Sticky footer actions (mobile) */}
-      <div className="fixed bottom-0 left-0 right-0 flex items-center justify-end gap-3 border-t border-gray-200 bg-white/95 px-4 py-3 backdrop-blur sm:hidden">
+      <div className="fixed bottom-0 left-0 right-0 flex items-center justify-end gap-3 border-t border-line bg-white/95 px-4 py-3 backdrop-blur sm:hidden">
         <ActionButtons onCancel={onCancel} submitting={submitting} label={submitLabel} />
       </div>
     </form>

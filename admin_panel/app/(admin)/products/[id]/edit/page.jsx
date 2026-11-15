@@ -22,8 +22,8 @@ export default function EditProductPage() {
     router.push("/products");
   };
 
-  if (isLoading) return <p className="p-6 text-gray-500">Loading product...</p>;
-  if (error || !product) return <p className="p-6 text-red-500">Product not found</p>;
+  if (isLoading) return <p className="p-6 text-muted">Loading product...</p>;
+  if (error || !product) return <p className="p-6 text-danger">Product not found</p>;
 
   return (
     <div className="p-6">
