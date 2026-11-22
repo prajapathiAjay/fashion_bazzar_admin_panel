@@ -46,8 +46,13 @@ export function PaymentBadge({ status }) {
 export const paymentMethodLabel = (method) =>
   method === "cod" ? "Cash on delivery" : method === "razorpay" ? "Online (Razorpay)" : method ?? "—";
 
-export const shippingMethodLabel = (method) =>
-  method === "express" ? "Express" : method === "standard" ? "Standard" : method ?? "—";
+// Name of the delivery option on an order. New orders save the name; older ones only have the code.
+export const shippingMethodLabel = (order) => {
+  if (order?.shippingMethodName) return order.shippingMethodName;
+  const code = order?.shippingMethod;
+  if (!code) return "—";
+  return code.charAt(0).toUpperCase() + code.slice(1).replace(/-/g, " ");
+};
 
 // user is populated by the backend; it can be null if the account was deleted
 export const customerName = (user) => {

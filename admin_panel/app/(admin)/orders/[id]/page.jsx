@@ -227,7 +227,7 @@ export default function ViewOrderPage() {
           <Card title="Summary">
             <dl>
               <Row label="Subtotal">{formatCurrency(order.subTotal ?? 0)}</Row>
-              <Row label={`Shipping (${shippingMethodLabel(order.shippingMethod)})`}>
+              <Row label={`Shipping (${shippingMethodLabel(order)})`}>
                 {order.shipping ? formatCurrency(order.shipping) : "Free"}
               </Row>
               <div className="mt-2 flex items-center justify-between border-t border-line pt-3">

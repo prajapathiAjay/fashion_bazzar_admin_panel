@@ -1,21 +1,44 @@
 import { baseApi } from "./baseApi";
 
-// Delivery rates: /api/admin/shipping
-// data = { standard: { enabled, price, freeAbove, minDays, maxDays }, express: { ...same } }
+// Delivery options: /api/admin/shipping
+// one method = { _id, code, name, description, price, freeAbove, minDays, maxDays, enabled, sortOrder }
 export const shippingApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    getShippingSettings: build.query({
+    getShippingMethods: build.query({
       query: () => "/admin/shipping",
-      transformResponse: (response) => response?.data,
+      transformResponse: (response) => response?.data ?? [],
       providesTags: ["Shipping"],
     }),
 
-    // body: { standard?: {...}, express?: {...} }
-    updateShippingSettings: build.mutation({
-      query: (body) => ({ url: "/admin/shipping", method: "PATCH", body }),
+    getShippingMethod: build.query({
+      query: (id) => `/admin/shipping/${id}`,
+      transformResponse: (response) => response?.data,
+      providesTags: (result, error, id) => [{ type: "Shipping", id }],
+    }),
+
+    // body: { name, description?, price, freeAbove?, minDays, maxDays, enabled? }
+    createShippingMethod: build.mutation({
+      query: (body) => ({ url: "/admin/shipping", method: "POST", body }),
+      invalidatesTags: ["Shipping"],
+    }),
+
+    // any of the fields above, e.g. { id, enabled: false }
+    updateShippingMethod: build.mutation({
+      query: ({ id, ...body }) => ({ url: `/admin/shipping/${id}`, method: "PATCH", body }),
+      invalidatesTags: (result, error, { id }) => ["Shipping", { type: "Shipping", id }],
+    }),
+
+    deleteShippingMethod: build.mutation({
+      query: (id) => ({ url: `/admin/shipping/${id}`, method: "DELETE" }),
       invalidatesTags: ["Shipping"],
     }),
   }),
 });
 
-export const { useGetShippingSettingsQuery, useUpdateShippingSettingsMutation } = shippingApi;
+export const {
+  useGetShippingMethodsQuery,
+  useGetShippingMethodQuery,
+  useCreateShippingMethodMutation,
+  useUpdateShippingMethodMutation,
+  useDeleteShippingMethodMutation,
+} = shippingApi;
