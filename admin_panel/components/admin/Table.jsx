@@ -108,8 +108,9 @@ const router=useRouter()
 
       {/* Footer: range, rows per page, page numbers */}
       {total > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-3 text-sm text-muted">
-          <p>
+        // 3 columns: range on the left, page numbers centred, rows-per-page on the right
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 border-t border-line px-4 py-3 text-sm text-muted">
+          <p className="justify-self-start">
             Showing{" "}
             <span className="font-medium text-ink">
               {start + 1}–{Math.min(start + pageSize, total)}
@@ -117,7 +118,12 @@ const router=useRouter()
             of <span className="font-medium text-ink">{total}</span>
           </p>
 
-          <label className="flex items-center gap-2">
+          {/* wrapper keeps the middle column even when Pagination hides itself (one page) */}
+          <div className="justify-self-center">
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
+          </div>
+
+          <label className="flex items-center gap-2 justify-self-end">
             Rows per page
             <select
               value={pageSize}
@@ -134,9 +140,6 @@ const router=useRouter()
               ))}
             </select>
           </label>
-
-          {/* hides itself when there is only one page */}
-          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
         </div>
       )}
     </div>
