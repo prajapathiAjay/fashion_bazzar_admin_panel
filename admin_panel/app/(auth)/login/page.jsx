@@ -1,6 +1,7 @@
 "use client";
-
+import {useSignInMutation} from "@/lib/api/adminApi.js"
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   ArrowRight,
   Eye,
@@ -27,15 +28,18 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const router=useRouter()
   const [submitting, setSubmitting] = useState(false);
-
+ const [signIn]=useSignInMutation()
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSubmitting(true);
     try {
+     await signIn({email,password}).unwrap()
       // TODO(api): sign in with { email, password }, reject non-admin roles,
       // save the token, then router.replace("/dashboard")
+     router.push("/dashboard")
       console.log({ email, password });
     } catch (err) {
       setError(err?.data?.message || "Something went wrong");
