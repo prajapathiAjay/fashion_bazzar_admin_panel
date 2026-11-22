@@ -79,3 +79,11 @@
     @apply outline-2 outline-offset-2 outline-brand;
   }
 }
+
+/* Wine sidebar: thin, light scrollbar instead of the default grey one */
+.sidebar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(251 249 246 / 0.25) transparent;
+}
+.sidebar-scroll::-webkit-scrollbar { width: 6px; }
+.sidebar-scroll::-webkit-scrollbar-thumb { background: rgb(251 249 246 / 0.25); border-radius: 999px; }
