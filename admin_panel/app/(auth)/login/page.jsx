@@ -2,6 +2,8 @@
 import {useSignInMutation} from "@/lib/api/adminApi.js"
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "@/lib/slice/authSlice";
 import {
   ArrowRight,
   Eye,
@@ -29,6 +31,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router=useRouter()
+  const dispatch=useDispatch()
   const [submitting, setSubmitting] = useState(false);
  const [signIn]=useSignInMutation()
   const handleSubmit = async (e) => {
@@ -36,11 +39,10 @@ export default function LoginPage() {
     setError("");
     setSubmitting(true);
     try {
-     await signIn({email,password}).unwrap()
-      // TODO(api): sign in with { email, password }, reject non-admin roles,
-      // save the token, then router.replace("/dashboard")
-     router.push("/dashboard")
-      console.log({ email, password });
+      // backend only lets admins sign in here, so no role check needed
+      const { token } = await signIn({ email, password }).unwrap();
+      dispatch(setCredentials(token));
+      router.replace("/dashboard");
     } catch (err) {
       setError(err?.data?.message || "Something went wrong");
     } finally {
