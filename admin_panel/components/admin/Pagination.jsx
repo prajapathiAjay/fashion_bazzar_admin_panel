@@ -40,8 +40,7 @@ export default function Pagination({
 }) {
   const pages = usePaginationRange({ currentPage, totalPages, siblingCount });
 
-  if (totalPages <= 1) return null;
-
+  // always shown, even with one page (Prev / Next are just disabled then)
   const isFirst = currentPage === 1;
   const isLast = currentPage === totalPages;
 

@@ -118,7 +118,7 @@ const router=useRouter()
             of <span className="font-medium text-ink">{total}</span>
           </p>
 
-          {/* wrapper keeps the middle column even when Pagination hides itself (one page) */}
+          {/* page numbers, centred */}
           <div className="justify-self-center">
             <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
           </div>
