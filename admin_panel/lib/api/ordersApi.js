@@ -24,6 +24,7 @@ export const ordersApi = baseApi.injectEndpoints({
       query: ({ id, status }) => ({ url: `/admin/orders/${id}/status`, method: "PATCH", body: { status } }),
       invalidatesTags: (result, error, { id, status }) => [
         "Order",
+        "Customer", // customer pages show order status and total spent
         { type: "Order", id },
         ...(status === "Cancelled" ? ["Product"] : []),
       ],
