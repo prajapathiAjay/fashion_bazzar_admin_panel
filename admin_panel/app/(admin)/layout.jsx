@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState, useSyncExternalStore } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
+import { logout } from "@/lib/slice/authSlice";
+import { getTokenExpiry, isTokenExpired } from "@/lib/tokenExpiry";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminNavbar from "@/components/admin/AdminNavbar";
 
@@ -10,19 +12,38 @@ export default function AdminLayout({ children }) {
   const [collapsed, setCollapsed] = useState(false);
   const token = useSelector((state) => state.auth.token);
   const router = useRouter();
-  // true once we've confirmed a token exists (checked in the browser only)
-  const [ready, setReady] = useState(false);
+  const dispatch = useDispatch();
+  // false while the server renders / during hydration, true in the browser after that.
+  // The server can't see localStorage, so the token is only known in the browser.
+  const inBrowser = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
+  // show the admin pages only with a token that hasn't expired
+  const ready = inBrowser && Boolean(token) && !isTokenExpired(token);
 
   // Runs after hydration, so it sees the real token from localStorage.
   // Also re-runs on logout (token -> null) and sends the user to login.
   useEffect(() => {
     if (!token) {
-      setReady(false);
       router.replace("/login");
-    } else {
-      setReady(true);
+      return undefined;
     }
-  }, [token, router]);
+    // token already past its expiry time -> log out before any page asks the API (and fails)
+    if (isTokenExpired(token)) {
+      dispatch(logout({ expired: true }));
+      return undefined;
+    }
+
+    // also log out at the exact moment it expires, if the admin keeps the tab open
+    const expiry = getTokenExpiry(token);
+    if (expiry === null) return undefined;
+    const msLeft = expiry - Date.now();
+    if (msLeft > 2147483647) return undefined; // longer than setTimeout can wait (~24 days)
+    const timer = setTimeout(() => dispatch(logout({ expired: true })), msLeft);
+    return () => clearTimeout(timer);
+  }, [token, router, dispatch]);
 
   // Don't flash admin pages before the check is done
   if (!ready) return null;

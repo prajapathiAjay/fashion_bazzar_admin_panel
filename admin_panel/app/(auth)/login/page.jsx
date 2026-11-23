@@ -2,8 +2,8 @@
 import {useSignInMutation} from "@/lib/api/adminApi.js"
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useDispatch } from "react-redux";
-import { setCredentials } from "@/lib/slice/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { clearSessionExpired, setCredentials } from "@/lib/slice/authSlice";
 import {
   ArrowRight,
   Eye,
@@ -32,11 +32,14 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const router=useRouter()
   const dispatch=useDispatch()
+  // true when the admin was logged out because their login expired / stopped working
+  const expiredNotice = useSelector((state) => state.auth.sessionExpired);
   const [submitting, setSubmitting] = useState(false);
  const [signIn]=useSignInMutation()
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    dispatch(clearSessionExpired()); // hide the "session expired" message once they try again
     setSubmitting(true);
     try {
       // backend only lets admins sign in here, so no role check needed
@@ -168,6 +171,12 @@ export default function LoginPage() {
                 </button>
               </div>
             </div>
+
+            {expiredNotice && !error && (
+              <p role="status" className="rounded-lg border border-sun/30 bg-sun/10 px-3 py-2 text-xs text-sun">
+                Your session expired. Please sign in again.
+              </p>
+            )}
 
             {error && (
               <p role="alert" className="rounded-lg border border-[#f2a7b5]/30 bg-brand/25 px-3 py-2 text-xs text-[#f8d3da]">
