@@ -230,6 +230,11 @@ export default function ViewOrderPage() {
               <Row label={`Shipping (${shippingMethodLabel(order)})`}>
                 {order.shipping ? formatCurrency(order.shipping) : "Free"}
               </Row>
+              {order.discount > 0 && (
+                <Row label={`Coupon ${order.discountCode ?? ""}`}>
+                  <span className="text-success">-{formatCurrency(order.discount)}</span>
+                </Row>
+              )}
               <div className="mt-2 flex items-center justify-between border-t border-line pt-3">
                 <dt className="text-sm font-semibold text-ink">Total</dt>
                 <dd className="text-lg font-semibold text-ink">{formatCurrency(order.totalAmount ?? 0)}</dd>
