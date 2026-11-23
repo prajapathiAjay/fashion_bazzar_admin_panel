@@ -11,7 +11,6 @@ import {
   LayoutGrid,
   Loader2,
   PackageCheck,
-  PlayCircle,
   ShieldCheck,
 } from "lucide-react";
 
@@ -19,7 +18,6 @@ import {
 const FEATURES = [
   { icon: LayoutGrid, title: "Products & categories", desc: "List, edit and organise every stall's pieces." },
   { icon: PackageCheck, title: "Orders", desc: "Follow each order from placed to delivered." },
-  { icon: PlayCircle, title: "Open demo", desc: "Visitors can look around in read-only mode." },
 ];
 
 const inputClass =
@@ -53,10 +51,6 @@ export default function LoginPage() {
     }
   };
 
-  const handleDemo = async () => {
-    setError("");
-    // TODO(api): sign in with the demo account (NEXT_PUBLIC_DEMO_EMAIL / NEXT_PUBLIC_DEMO_PASSWORD)
-  };
 
   return (
     <div
@@ -194,21 +188,6 @@ export default function LoginPage() {
               {!submitting && <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />}
             </button>
           </form>
-
-          <div className="my-5 flex items-center gap-3 text-xs text-subtle">
-            <span className="h-px flex-1 bg-white/10" />
-            Just looking around?
-            <span className="h-px flex-1 bg-white/10" />
-          </div>
-
-          <button
-            type="button"
-            onClick={handleDemo}
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-[#f2a7b5]/40 bg-brand/25 text-sm font-semibold text-[#f8d3da] transition-colors hover:bg-brand/40"
-          >
-            <PlayCircle size={16} />
-            Launch demo · read-only
-          </button>
 
           <p className="mt-5 flex items-center justify-center gap-1.5 text-xs text-subtle">
             <ShieldCheck size={13} />
