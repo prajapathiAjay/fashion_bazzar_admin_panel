@@ -15,9 +15,16 @@ const rawBaseQuery = fetchBaseQuery({
 // old secret, or missing), log out: the (admin) layout then sends the admin to /login.
 // 403 is NOT handled here: it means "logged in, but not allowed" and the page shows the error.
 const baseQueryWithLogout = async (args, api, extraOptions) => {
+  const sentToken = api.getState().auth?.token;
   const result = await rawBaseQuery(args, api, extraOptions);
 
-  if (result.error?.status === 401 && api.endpoint !== "signIn") {
+  // Only if the refused token is still the one in use: after a password change the panel
+  // swaps in a fresh token, and a slow request made with the old one mustn't log the admin out.
+  if (
+    result.error?.status === 401 &&
+    api.endpoint !== "signIn" &&
+    sentToken === api.getState().auth?.token
+  ) {
     api.dispatch(logout({ expired: true }));
     // throw away the old session's cached data (baseApi exists by the time a request runs)
     api.dispatch(baseApi.util.resetApiState());

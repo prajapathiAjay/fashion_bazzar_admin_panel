@@ -1,9 +1,10 @@
 "use client";
 import {useSignInMutation} from "@/lib/api/adminApi.js"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { clearSessionExpired, setCredentials } from "@/lib/slice/authSlice";
+import { isTokenExpired } from "@/lib/tokenExpiry";
 import {
   ArrowRight,
   Eye,
@@ -32,8 +33,15 @@ export default function LoginPage() {
   const dispatch=useDispatch()
   // true when the admin was logged out because their login expired / stopped working
   const expiredNotice = useSelector((state) => state.auth.sessionExpired);
+  const token = useSelector((state) => state.auth.token);
   const [submitting, setSubmitting] = useState(false);
  const [signIn]=useSignInMutation()
+
+  // already signed in with a login that still works -> skip this page
+  // (runs in the browser after hydration, where the saved token is known)
+  useEffect(() => {
+    if (token && !isTokenExpired(token)) router.replace("/dashboard");
+  }, [token, router]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Check, Eye, EyeOff, KeyRound, Store, UserRound } from "lucide-react";
+import { setCredentials } from "@/lib/slice/authSlice";
 import {
   useChangePasswordMutation,
   useGetMyProfileQuery,
@@ -116,6 +118,7 @@ function PasswordSection() {
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
   const [changePassword, { isLoading }] = useChangePasswordMutation();
+  const dispatch = useDispatch();
 
   const set = (key) => (e) => {
     setValues((v) => ({ ...v, [key]: e.target.value }));
@@ -131,7 +134,9 @@ function PasswordSection() {
     if (newPassword !== confirmPassword) return setError("New passwords don't match.");
     if (newPassword === currentPassword) return setError("New password must be different from the current one.");
     try {
-      await changePassword({ currentPassword, newPassword }).unwrap();
+      const res = await changePassword({ currentPassword, newPassword }).unwrap();
+      // the change logs out every older login, including this one, so keep the fresh token
+      if (res?.data?.token) dispatch(setCredentials(res.data.token));
       setValues(EMPTY_PASSWORDS);
       setDone(true);
     } catch (err) {
