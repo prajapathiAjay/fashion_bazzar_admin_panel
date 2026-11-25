@@ -16,11 +16,13 @@ import {
   BarChart3,
   Settings,
   LogOut,
+  Inbox,
 } from "lucide-react";
 import { logout } from "@/lib/slice/authSlice";
 import { baseApi } from "@/lib/api/baseApi";
 import { useGetOrdersQuery } from "@/lib/api/ordersApi";
 import { useGetReviewsQuery } from "@/lib/api/reviewsApi";
+import { useGetMessagesQuery } from "@/lib/api/messagesApi";
 
 // Add/remove sections here — the sidebar renders whatever is in this list.
 // `badge` names a live count from useBadgeCounts() below.
@@ -57,6 +59,7 @@ const NAV_GROUPS = [
   {
     label: "Help",
     items: [
+      { label: "Messages", href: "/messages", icon: Inbox, badge: "messages" },
       { label: "FAQs", href: "/faq", icon: CircleHelp },
       { label: "Settings", href: "/settings", icon: Settings },
     ],
@@ -70,7 +73,9 @@ const COLLAPSED_WIDTH = "w-[72px]";
 function useBadgeCounts() {
   const { data: orders = [] } = useGetOrdersQuery();
   const { data: reviews = [] } = useGetReviewsQuery();
+  const { data: messages = [] } = useGetMessagesQuery();
   return {
+    messages: messages.filter((m) => !m.isResolved).length,                       // not dealt with yet
     orders: orders.filter((o) => o.status === "Ordered").length,                  // new, not packed yet
     reviews: reviews.filter((r) => !r.isHidden && !r.reply?.text).length,         // waiting for a reply
   };

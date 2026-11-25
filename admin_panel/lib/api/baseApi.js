@@ -29,6 +29,6 @@ const baseQueryWithLogout = async (args, api, extraOptions) => {
 export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithLogout,
-  tagTypes: ["Product","Category","Order","Customer","Discount","Shipping","Review"],
+  tagTypes: ["Product","Category","Order","Customer","Discount","Shipping","Review","Message","Faq","Settings"],
   endpoints: () => ({}),
 });

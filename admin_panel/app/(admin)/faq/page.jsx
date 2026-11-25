@@ -1,25 +1,40 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, CircleCheck, FilePen, Plus, Search, Trash2, X } from "lucide-react";
+import { ChevronDown, CircleCheck, FilePen, Pencil, Plus, Search, Trash2, X } from "lucide-react";
 import ActionsMenu from "@/components/admin/ActionsMenu";
-import { DUMMY_FAQS, FAQ_TOPICS } from "@/components/faq/faqData";
+import {
+  useCreateFaqMutation,
+  useDeleteFaqMutation,
+  useGetFaqsQuery,
+  useUpdateFaqMutation,
+} from "@/lib/api/faqsApi";
 
 const ALL = "All topics";
-const emptyForm = { topic: FAQ_TOPICS[0], question: "", answer: "" };
 
 const inputClass =
   "w-full rounded-lg border border-line-strong bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/15";
 
 export default function Faqs() {
-  // Dummy data kept in state: adding, hiding and deleting work on screen,
-  // but nothing is saved. A page refresh brings the original list back.
-  const [faqs, setFaqs] = useState(DUMMY_FAQS);
+  const { data, isLoading, error: loadError } = useGetFaqsQuery();
+  const [createFaq, { isLoading: creating }] = useCreateFaqMutation();
+  const [updateFaq, { isLoading: updating }] = useUpdateFaqMutation();
+  const [deleteFaq] = useDeleteFaqMutation();
+
+  const topics = data?.topics ?? [];
+  const faqs = data?.faqs ?? [];
+  const emptyForm = { topic: topics[0] ?? "", question: "", answer: "" };
+
   const [topic, setTopic] = useState(ALL);
   const [search, setSearch] = useState("");
-  const [openId, setOpenId] = useState(DUMMY_FAQS[0].id);
+  const [openId, setOpenId] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState(null); // null = adding a new question
   const [form, setForm] = useState(emptyForm);
+  const [error, setError] = useState("");
+
+  if (isLoading) return <p className="text-muted">Loading FAQs...</p>;
+  if (loadError) return <p className="text-danger">Failed to load FAQs</p>;
 
   const term = search.trim().toLowerCase();
   const visible = faqs.filter(
@@ -29,27 +44,64 @@ export default function Faqs() {
   );
   const publishedCount = faqs.filter((f) => f.isPublished).length;
 
-  const handleAdd = (e) => {
-    e.preventDefault();
-    const question = form.question.trim();
-    const answer = form.answer.trim();
-    if (!question || !answer) return;
-    const id = `faq-${Date.now()}`;
-    setFaqs((list) => [
-      { id, topic: form.topic, question, answer, isPublished: false, updatedAt: new Date().toISOString().slice(0, 10) },
-      ...list,
-    ]);
-    setOpenId(id);
+  const closeForm = () => {
     setForm(emptyForm);
+    setEditingId(null);
     setShowForm(false);
+    setError("");
   };
 
-  const togglePublished = (id) =>
-    setFaqs((list) => list.map((f) => (f.id === id ? { ...f, isPublished: !f.isPublished } : f)));
+  const openAdd = () => {
+    if (showForm) return closeForm();
+    setForm(emptyForm);
+    setEditingId(null);
+    setError("");
+    setShowForm(true);
+  };
 
-  const handleDelete = (faq) => {
+  const openEdit = (faq) => {
+    setForm({ topic: faq.topic, question: faq.question, answer: faq.answer });
+    setEditingId(faq._id);
+    setError("");
+    setShowForm(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const body = { topic: form.topic, question: form.question.trim(), answer: form.answer.trim() };
+    if (!body.question || !body.answer) return setError("Write both the question and the answer.");
+    setError("");
+    try {
+      if (editingId) {
+        await updateFaq({ id: editingId, ...body }).unwrap();
+        setOpenId(editingId);
+      } else {
+        const created = await createFaq({ ...body, isPublished: false }).unwrap();
+        setOpenId(created?.data?._id ?? null);
+      }
+      closeForm();
+    } catch (err) {
+      setError(err?.data?.message || "Could not save the question.");
+    }
+  };
+
+  const togglePublished = async (faq) => {
+    try {
+      await updateFaq({ id: faq._id, isPublished: !faq.isPublished }).unwrap();
+    } catch (err) {
+      window.alert(err?.data?.message || "Could not change the status.");
+    }
+  };
+
+  const handleDelete = async (faq) => {
     if (!window.confirm(`Delete "${faq.question}"?`)) return;
-    setFaqs((list) => list.filter((f) => f.id !== faq.id));
+    try {
+      await deleteFaq(faq._id).unwrap();
+      if (editingId === faq._id) closeForm();
+    } catch (err) {
+      window.alert(err?.data?.message || "Could not delete the question.");
+    }
   };
 
   return (
@@ -65,7 +117,7 @@ export default function Faqs() {
         </div>
         <button
           type="button"
-          onClick={() => setShowForm((v) => !v)}
+          onClick={openAdd}
           className="inline-flex items-center gap-1.5 rounded-md bg-brand px-3.5 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-brand-dark"
         >
           {showForm ? <X size={16} /> : <Plus size={16} />}
@@ -73,14 +125,15 @@ export default function Faqs() {
         </button>
       </div>
 
-      <p className="mt-4 rounded-lg border border-sun/40 bg-sun-50 px-4 py-2.5 text-sm text-ink-soft">
-        Sample data: changes on this page are not saved yet and reset when you refresh.
+      <p className="mt-4 text-sm text-muted">
+        Only <span className="font-medium text-ink">published</span> questions appear on the website&apos;s Help centre.
+        New questions start as drafts.
       </p>
 
-      {/* Add form */}
+      {/* Add / edit form */}
       {showForm && (
-        <form onSubmit={handleAdd} className="mt-4 space-y-4 rounded-xl border border-line bg-white p-5">
-          <h2 className="text-[15px] font-semibold text-ink">New question</h2>
+        <form onSubmit={handleSubmit} className="mt-4 space-y-4 rounded-xl border border-line bg-white p-5">
+          <h2 className="text-[15px] font-semibold text-ink">{editingId ? "Edit question" : "New question"}</h2>
           <div className="grid gap-4 sm:grid-cols-[14rem_1fr]">
             <label className="block text-sm font-medium text-ink-soft">
               Topic
@@ -89,7 +142,7 @@ export default function Faqs() {
                 onChange={(e) => setForm({ ...form, topic: e.target.value })}
                 className={`${inputClass} mt-1.5`}
               >
-                {FAQ_TOPICS.map((t) => (
+                {topics.map((t) => (
                   <option key={t}>{t}</option>
                 ))}
               </select>
@@ -117,23 +170,27 @@ export default function Faqs() {
               placeholder="Write a short, clear answer."
               className={`${inputClass} mt-1.5 resize-none`}
             />
+            <span className="mt-1 block text-right text-xs text-subtle">{form.answer.length}/600</span>
           </label>
+          {error && (
+            <p role="alert" className="text-sm text-danger">
+              {error}
+            </p>
+          )}
           <div className="flex justify-end gap-2">
             <button
               type="button"
-              onClick={() => {
-                setForm(emptyForm);
-                setShowForm(false);
-              }}
+              onClick={closeForm}
               className="rounded-md border border-line-strong px-3.5 py-2 text-sm font-medium text-ink hover:bg-mist"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="rounded-md bg-brand px-3.5 py-2 text-sm font-medium text-white hover:bg-brand-dark"
+              disabled={creating || updating}
+              className="rounded-md bg-brand px-3.5 py-2 text-sm font-medium text-white hover:bg-brand-dark disabled:opacity-60"
             >
-              Add as draft
+              {creating || updating ? "Saving…" : editingId ? "Save changes" : "Add as draft"}
             </button>
           </div>
         </form>
@@ -142,7 +199,7 @@ export default function Faqs() {
       {/* Topic tabs + search */}
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap gap-2">
-          {[ALL, ...FAQ_TOPICS].map((t) => {
+          {[ALL, ...topics].map((t) => {
             const count = t === ALL ? faqs.length : faqs.filter((f) => f.topic === t).length;
             const active = topic === t;
             return (
@@ -178,26 +235,33 @@ export default function Faqs() {
       {/* Questions */}
       <div className="mt-4 overflow-hidden rounded-xl border border-line bg-white">
         {visible.length === 0 ? (
-          <p className="px-5 py-12 text-center text-sm text-subtle">No questions match.</p>
+          <p className="px-5 py-12 text-center text-sm text-subtle">
+            {faqs.length === 0 ? "No questions yet. Use “Add FAQ” to write the first one." : "No questions match."}
+          </p>
         ) : (
           <ul className="divide-y divide-line">
             {visible.map((faq) => {
-              const open = openId === faq.id;
+              const open = openId === faq._id;
               return (
-                <li key={faq.id}>
-                  {/* The row: the question opens the answer; the delete button sits beside
-                      the status so a question can be removed without opening it */}
+                <li key={faq._id}>
+                  {/* The row: the question opens the answer; the actions menu sits beside
+                      the status so a question can be changed without opening it */}
                   <div className="flex items-center gap-2 pr-3 transition-colors hover:bg-snow">
                     <button
                       type="button"
-                      onClick={() => setOpenId(open ? null : faq.id)}
+                      onClick={() => setOpenId(open ? null : faq._id)}
                       aria-expanded={open}
                       className="flex min-w-0 flex-1 items-center gap-4 py-4 pl-5 text-left"
                     >
                       <span className="min-w-0 flex-1">
                         <span className="block text-[15px] font-medium text-ink">{faq.question}</span>
                         <span className="mt-0.5 block text-xs text-subtle">
-                          {faq.topic} · Updated {new Date(faq.updatedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                          {faq.topic} · Updated{" "}
+                          {new Date(faq.updatedAt).toLocaleDateString("en-IN", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
                         </span>
                       </span>
                       <span
@@ -212,10 +276,11 @@ export default function Faqs() {
                     <ActionsMenu
                       label={`Actions for "${faq.question}"`}
                       items={[
+                        { label: "Edit", icon: Pencil, onClick: () => openEdit(faq) },
                         {
                           label: faq.isPublished ? "Move to draft" : "Publish",
                           icon: faq.isPublished ? FilePen : CircleCheck,
-                          onClick: () => togglePublished(faq.id),
+                          onClick: () => togglePublished(faq),
                         },
                         { label: "Delete", icon: Trash2, danger: true, onClick: () => handleDelete(faq) },
                       ]}
@@ -223,7 +288,7 @@ export default function Faqs() {
 
                     <button
                       type="button"
-                      onClick={() => setOpenId(open ? null : faq.id)}
+                      onClick={() => setOpenId(open ? null : faq._id)}
                       aria-label={open ? "Hide answer" : "Show answer"}
                       className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-subtle transition-colors hover:bg-mist hover:text-ink"
                     >
@@ -232,7 +297,9 @@ export default function Faqs() {
                   </div>
 
                   {open && (
-                    <p className="max-w-3xl px-5 pb-5 text-sm leading-relaxed text-muted">{faq.answer}</p>
+                    <p className="max-w-3xl whitespace-pre-wrap px-5 pb-5 text-sm leading-relaxed text-muted">
+                      {faq.answer}
+                    </p>
                   )}
                 </li>
               );
