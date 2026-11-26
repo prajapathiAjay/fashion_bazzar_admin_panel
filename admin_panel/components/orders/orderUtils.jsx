@@ -1,6 +1,10 @@
 // Shared helpers for the admin Orders pages (list + detail)
 
-export const ORDER_STATUSES = ["Ordered", "Packed", "Shipped", "Delivered", "Cancelled"];
+export const ORDER_STATUSES = ["Ordered", "Packed", "Shipped", "Delivered", "Cancelled", "Returned"];
+
+// Returns that still need the admin to do something (shown as a filter + badge on the list)
+export const OPEN_RETURN_STATUSES = ["Requested", "Approved", "Received"];
+export const hasOpenReturn = (order) => OPEN_RETURN_STATUSES.includes(order?.returnRequest?.status);
 
 // Same rules as the backend (order.repository.js NEXT_STATUSES):
 // forward one step at a time, cancel only before shipping, Delivered/Cancelled are final.
@@ -14,7 +18,26 @@ const STATUS_STYLES = {
   Shipped: "bg-brand-50 text-brand ring-brand/25",
   Delivered: "bg-success-50 text-success ring-success/30",
   Cancelled: "bg-danger-50 text-danger ring-danger/30",
+  Returned: "bg-mist text-ink-soft ring-line-strong",
 };
+
+// Badge for the return request (Requested -> Approved -> Received -> Refunded, or Rejected)
+const RETURN_STYLES = {
+  Requested: "bg-sun-50 text-sun-dark ring-sun/40",
+  Approved: "bg-info-50 text-info ring-info/30",
+  Received: "bg-brand-50 text-brand ring-brand/25",
+  Refunded: "bg-success-50 text-success ring-success/30",
+  Rejected: "bg-danger-50 text-danger ring-danger/30",
+};
+
+export function ReturnBadge({ status }) {
+  if (!status) return null;
+  return (
+    <span className={`${badgeBase} ${RETURN_STYLES[status] ?? "bg-mist text-muted ring-line"}`}>
+      Return {status.toLowerCase()}
+    </span>
+  );
+}
 
 const PAYMENT_STYLES = {
   Pending: "bg-sun-50 text-sun-dark ring-sun/40",

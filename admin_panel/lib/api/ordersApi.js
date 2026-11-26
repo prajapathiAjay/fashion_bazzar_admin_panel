@@ -29,7 +29,19 @@ export const ordersApi = baseApi.injectEndpoints({
         ...(status === "Cancelled" ? ["Product"] : []),
       ],
     }),
+
+    // PATCH /api/admin/orders/:id/return  body: { action: "approve" | "reject" | "receive" | "refunded", note? }
+    // "receive" puts stock back (and refunds online payments), so products / dashboard refetch too.
+    updateReturn: build.mutation({
+      query: ({ id, action, note }) => ({ url: `/admin/orders/${id}/return`, method: "PATCH", body: { action, note } }),
+      invalidatesTags: (result, error, { id, action }) => [
+        "Order",
+        "Customer",
+        { type: "Order", id },
+        ...(action === "receive" ? ["Product"] : []),
+      ],
+    }),
   }),
 });
 
-export const { useGetOrdersQuery, useGetOrderQuery, useUpdateOrderStatusMutation } = ordersApi;
+export const { useGetOrdersQuery, useGetOrderQuery, useUpdateOrderStatusMutation, useUpdateReturnMutation } = ordersApi;

@@ -12,6 +12,8 @@ import {
   NEXT_STEP,
   canCancel,
   ORDER_STATUSES,
+  ReturnBadge,
+  hasOpenReturn,
   PaymentBadge,
   StatusBadge,
   customerName,
@@ -31,7 +33,8 @@ const columns = [
   { col_label: "Actions", value: "actions" },
 ];
 
-const FILTERS = ["All", ...ORDER_STATUSES];
+// "Returns" = orders with a return the admin still has to handle
+const FILTERS = ["All", ...ORDER_STATUSES, "Returns"];
 
 export default function OrdersPage() {
   const { data: orders = [], isLoading, error } = useGetOrdersQuery();
@@ -50,6 +53,7 @@ export default function OrdersPage() {
   const counts = useMemo(() => {
     const c = { All: orders.length };
     for (const o of orders) c[o.status] = (c[o.status] ?? 0) + 1;
+    c.Returns = orders.filter(hasOpenReturn).length;
     return c;
   }, [orders]);
 
@@ -57,7 +61,9 @@ export default function OrdersPage() {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return orders.filter((o) => {
-      if (statusFilter !== "All" && o.status !== statusFilter) return false;
+      if (statusFilter === "Returns") {
+        if (!hasOpenReturn(o)) return false;
+      } else if (statusFilter !== "All" && o.status !== statusFilter) return false;
       if (!q) return true;
       return [o.orderNumber, customerName(o.user), o.user?.email]
         .filter(Boolean)
@@ -90,7 +96,12 @@ export default function OrdersPage() {
         <span className="text-xs text-muted">{paymentMethodLabel(o.paymentMethod)}</span>
       </div>
     ),
-    statusCell: <StatusBadge status={o.status} />,
+    statusCell: (
+      <div className="flex flex-col items-start gap-1">
+        <StatusBadge status={o.status} />
+        {hasOpenReturn(o) && <ReturnBadge status={o.returnRequest.status} />}
+      </div>
+    ),
     actions: <ActionsMenu label={`Actions for ${o.orderNumber}`} items={rowActions(o)} />,
   }));
 

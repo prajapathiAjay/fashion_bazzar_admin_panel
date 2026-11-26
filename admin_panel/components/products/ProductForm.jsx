@@ -259,7 +259,8 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
         stock: product.stock === "" ? 0 : Number(product.stock),
         isActive: product.isActive,
         categories: product.categories,
-        sellingPrice: product.price * (1 - (product.discount === "" ? 0 : Number(product.discount)) / 100),
+        // whole rupees, so shop, cart and the charged amount all show the same number
+        sellingPrice: Math.round(Number(product.price) * (1 - (product.discount === "" ? 0 : Number(product.discount)) / 100)),
         sizes: product.sizes,
         colors: product.colors,
         images: images.map((img) => img.url ?? img.file),
@@ -280,7 +281,7 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
   // ---- Derived ----
   const priceNum = Number(product.price) || 0;
   const discountNum = Math.min(Math.max(Number(product.discount) || 0, 0), 100);
-  const finalPrice = priceNum * (1 - discountNum / 100);
+  const finalPrice = Math.round(priceNum * (1 - discountNum / 100));
   const stockNum = Number(product.stock) || 0;
   const coverImage = images[0]?.preview;
   const selectedCategoryNames = allCategories

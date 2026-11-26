@@ -2,14 +2,16 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowLeft, ArrowRight, Check, CreditCard, Loader2, MapPin, Package, User, XCircle } from "lucide-react";
-import { useGetOrderQuery } from "@/lib/api/ordersApi";
+import { useState } from "react";
+import { ArrowLeft, ArrowRight, Check, CreditCard, Loader2, MapPin, Package, RotateCcw, User, XCircle } from "lucide-react";
+import { useGetOrderQuery, useUpdateReturnMutation } from "@/lib/api/ordersApi";
 import { formatCurrency } from "@/components/dashboard/format";
 import useOrderStatusChange, { noticeClass } from "@/components/orders/useOrderStatusChange";
 import {
   NEXT_STEP,
   canCancel,
   PaymentBadge,
+  ReturnBadge,
   StatusBadge,
   customerName,
   formatDateTime,
@@ -45,11 +47,22 @@ function Row({ label, children }) {
 }
 
 // Ordered -> Packed -> Shipped -> Delivered, filled up to the current status (display only)
-function StatusProgress({ status }) {
+function StatusProgress({ status, order }) {
   if (status === "Cancelled") {
     return (
-      <div className="flex items-center gap-2 rounded-lg bg-danger-50 px-4 py-3 text-sm font-medium text-danger">
-        <XCircle size={16} /> This order was cancelled
+      <div className="rounded-lg bg-danger-50 px-4 py-3 text-sm font-medium text-danger">
+        <p className="flex items-center gap-2">
+          <XCircle size={16} /> This order was cancelled
+          {order?.cancelledBy && ` by the ${order.cancelledBy}`}
+        </p>
+        {order?.cancelReason && <p className="mt-1 pl-6 font-normal">Reason: {order.cancelReason}</p>}
+      </div>
+    );
+  }
+  if (status === "Returned") {
+    return (
+      <div className="flex items-center gap-2 rounded-lg bg-mist px-4 py-3 text-sm font-medium text-ink-soft">
+        <RotateCcw size={16} /> Delivered, then returned — the items are back in stock
       </div>
     );
   }
@@ -77,6 +90,109 @@ function StatusProgress({ status }) {
         );
       })}
     </ol>
+  );
+}
+
+// The customer's return request and the next step the admin can take
+function ReturnPanel({ order }) {
+  const r = order.returnRequest;
+  const [note, setNote] = useState("");
+  const [notice, setNotice] = useState(null);
+  const [updateReturn, { isLoading, originalArgs }] = useUpdateReturnMutation();
+  const isCod = order.paymentMethod === "cod";
+  const total = formatCurrency(order.totalAmount ?? 0);
+
+  const run = async (action, question) => {
+    if (action === "reject" && !note.trim()) {
+      setNotice({ type: "error", text: "Add a note telling the customer why the return is rejected." });
+      return;
+    }
+    if (!window.confirm(question)) return;
+    setNotice(null);
+    try {
+      const res = await updateReturn({ id: order._id, action, note: note.trim() || undefined }).unwrap();
+      setNotice({ type: res.refundFailed ? "warning" : "success", text: res.message });
+      setNote("");
+    } catch (err) {
+      setNotice({ type: "error", text: err?.data?.message || "Could not update the return" });
+    }
+  };
+  const busy = (action) => isLoading && originalArgs?.action === action;
+  const btn = "inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium shadow-sm transition disabled:cursor-not-allowed disabled:opacity-60";
+
+  return (
+    <section className="mb-6 rounded-xl border border-sun/40 bg-white shadow-sm">
+      <h2 className="flex flex-wrap items-center gap-2 border-b border-line px-5 py-3 text-sm font-semibold text-ink">
+        <RotateCcw size={16} className="text-muted" /> Return
+        <ReturnBadge status={r.status} />
+      </h2>
+      <div className="px-5 py-4">
+        <dl>
+          <Row label="Requested">{formatDateTime(r.requestedAt)}</Row>
+          <Row label="Reason">{r.reason || "—"}</Row>
+          {isCod && <Row label="Refund to (UPI / bank)"><span className="break-all">{r.refundTo || "—"}</span></Row>}
+          <Row label="Refund amount">{total} · {isCod ? "send manually" : "automatic via Razorpay"}</Row>
+          {r.adminNote && <Row label="Note to customer">{r.adminNote}</Row>}
+          {r.receivedAt && <Row label="Received back">{formatDateTime(r.receivedAt)}</Row>}
+          {r.refundedAt && <Row label="Refunded">{formatDateTime(r.refundedAt)}</Row>}
+        </dl>
+
+        {(r.status === "Requested" || r.status === "Approved" || r.status === "Received") && (
+          <div className="mt-4 border-t border-line pt-4">
+            {r.status === "Requested" && (
+              <label className="mb-3 block text-xs font-medium text-muted">
+                Note to the customer (required to reject, optional to approve)
+                <input
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  maxLength={500}
+                  placeholder="e.g. Our courier will pick it up on Monday"
+                  className="mt-1 w-full rounded-lg border border-line-strong px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none"
+                />
+              </label>
+            )}
+            <div className="flex flex-wrap justify-end gap-3">
+              {r.status === "Requested" && (
+                <>
+                  <button type="button" disabled={isLoading} onClick={() => run("reject", `Reject the return for ${order.orderNumber}?`)} className={`${btn} border border-danger/30 bg-white text-danger hover:bg-danger-50`}>
+                    {busy("reject") ? <Loader2 size={15} className="animate-spin" /> : <XCircle size={15} />} Reject
+                  </button>
+                  <button type="button" disabled={isLoading} onClick={() => run("approve", `Approve the return for ${order.orderNumber}? Then arrange the pickup with the customer.`)} className={`${btn} bg-brand text-white hover:bg-brand-dark`}>
+                    {busy("approve") ? <Loader2 size={15} className="animate-spin" /> : <Check size={15} />} Approve return
+                  </button>
+                </>
+              )}
+              {r.status === "Approved" && (
+                <button
+                  type="button"
+                  disabled={isLoading}
+                  onClick={() => run("receive", `Mark the items of ${order.orderNumber} as received back? They go back into stock${isCod ? "." : ` and ${total} is refunded through Razorpay.`}`)}
+                  className={`${btn} bg-brand text-white hover:bg-brand-dark`}
+                >
+                  {busy("receive") ? <Loader2 size={15} className="animate-spin" /> : <Package size={15} />} Items received back
+                </button>
+              )}
+              {r.status === "Received" && (
+                <button
+                  type="button"
+                  disabled={isLoading}
+                  onClick={() => run("refunded", `Confirm you have sent ${total} to the customer${isCod && r.refundTo ? ` (${r.refundTo})` : ""}?`)}
+                  className={`${btn} bg-success text-white hover:opacity-90`}
+                >
+                  {busy("refunded") ? <Loader2 size={15} className="animate-spin" /> : <Check size={15} />} Mark refund as sent
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {notice && (
+          <p role="status" className={`mt-4 rounded-lg px-4 py-2.5 text-sm ${noticeClass(notice.type)}`}>
+            {notice.text}
+          </p>
+        )}
+      </div>
+    </section>
   );
 }
 
@@ -138,7 +254,7 @@ export default function ViewOrderPage() {
 
       {/* Progress + status actions */}
       <div className="mb-6 rounded-xl border border-line bg-white px-5 py-5 shadow-sm">
-        <StatusProgress status={order.status} />
+        <StatusProgress status={order.status} order={order} />
 
         {(NEXT_STEP[order.status] || canCancel(order.status)) && (
           <div className="mt-5 flex flex-wrap items-center justify-end gap-3 border-t border-line pt-4">
@@ -184,6 +300,8 @@ export default function ViewOrderPage() {
           </p>
         )}
       </div>
+
+      {order.returnRequest?.status && <ReturnPanel order={order} />}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
         {/* Left: items + totals */}

@@ -58,7 +58,7 @@ export default function ViewCustomerPage() {
   const orders = customer.orders ?? [];
   const addresses = customer.addresses ?? [];
   // cancelled orders are not money spent
-  const counted = orders.filter((o) => o.status !== "Cancelled");
+  const counted = orders.filter((o) => o.status !== "Cancelled" && o.status !== "Returned");
   const totalSpent = counted.reduce((sum, o) => sum + (o.totalAmount ?? 0), 0);
   const avgOrder = counted.length ? totalSpent / counted.length : 0;
   const initials =
