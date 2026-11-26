@@ -194,12 +194,14 @@ function PasswordSection() {
 
 // The form only mounts once the saved values have loaded, so it can start from them.
 function StoreForm({ initial }) {
+  // saved = what the server has now (starts as the loaded values, then the result of each save)
+  const [saved, setSaved] = useState(initial);
   const [form, setForm] = useState(initial);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
   const [updateStore, { isLoading }] = useUpdateStoreSettingsMutation();
 
-  const changed = Object.keys(initial).some((k) => form[k] !== initial[k]);
+  const changed = Object.keys(saved).some((k) => form[k] !== saved[k]);
 
   const set = (key) => (e) => {
     setForm((f) => ({ ...f, [key]: e.target.value }));
@@ -210,7 +212,11 @@ function StoreForm({ initial }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await updateStore(form).unwrap();
+      // the server trims spaces, so show exactly what it saved
+      const result = (await updateStore(form).unwrap()) ?? form;
+      const next = { ...form, ...result };
+      setSaved(next);
+      setForm(next);
       setDone(true);
     } catch (err) {
       setError(err?.data?.message || "Couldn't save the store details.");
@@ -234,7 +240,7 @@ function StoreForm({ initial }) {
               type="button"
               disabled={!changed || isLoading}
               onClick={() => {
-                setForm(initial);
+                setForm(saved);
                 setError("");
               }}
               className="rounded-lg border border-line-strong px-4 py-2 text-sm font-medium text-ink transition hover:bg-mist disabled:cursor-not-allowed disabled:opacity-50"
@@ -292,8 +298,8 @@ function StoreSection() {
   const { data, isLoading, error } = useGetStoreSettingsQuery();
   if (isLoading) return <p className="text-sm text-muted">Loading store details…</p>;
   if (error) return <p className="text-sm text-danger">Failed to load store details</p>;
-  // key: after a save the query refetches, and the form restarts from the new saved values
-  return <StoreForm key={JSON.stringify(data)} initial={data} />;
+  // the form keeps its own copy after a save, so the "Saved" message stays on screen
+  return <StoreForm initial={data} />;
 }
 
 export default function Settings() {

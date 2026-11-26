@@ -19,7 +19,7 @@ export default function Faqs() {
   const { data, isLoading, error: loadError } = useGetFaqsQuery();
   const [createFaq, { isLoading: creating }] = useCreateFaqMutation();
   const [updateFaq, { isLoading: updating }] = useUpdateFaqMutation();
-  const [deleteFaq] = useDeleteFaqMutation();
+  const [deleteFaq, { isLoading: deletingFaq }] = useDeleteFaqMutation();
 
   const topics = data?.topics ?? [];
   const faqs = data?.faqs ?? [];
@@ -95,6 +95,8 @@ export default function Faqs() {
   };
 
   const handleDelete = async (faq) => {
+    // one delete at a time (a double click would send a second DELETE)
+    if (deletingFaq) return;
     if (!window.confirm(`Delete "${faq.question}"?`)) return;
     try {
       await deleteFaq(faq._id).unwrap();

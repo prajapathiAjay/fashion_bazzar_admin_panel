@@ -6,6 +6,10 @@ export const ORDER_STATUSES = ["Ordered", "Packed", "Shipped", "Delivered", "Can
 export const OPEN_RETURN_STATUSES = ["Requested", "Approved", "Received"];
 export const hasOpenReturn = (order) => OPEN_RETURN_STATUSES.includes(order?.returnRequest?.status);
 
+// Cancelled online order whose Razorpay refund didn't go through: money is still owed to the customer
+export const refundOwed = (order) =>
+  order?.status === "Cancelled" && order?.paymentMethod === "razorpay" && order?.paymentStatus === "Paid";
+
 // Same rules as the backend (order.repository.js NEXT_STATUSES):
 // forward one step at a time, cancel only before shipping, Delivered/Cancelled are final.
 export const NEXT_STEP = { Ordered: "Packed", Packed: "Shipped", Shipped: "Delivered" };

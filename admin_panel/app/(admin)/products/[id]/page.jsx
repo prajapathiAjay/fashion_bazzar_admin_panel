@@ -35,7 +35,7 @@ export default function ViewProductPage() {
   const [activeImage, setActiveImage] = useState(0);
 
   const handleDelete = async () => {
-    if (!window.confirm(`Delete "${product.name}"? This also removes it from bags and wishlists, and cannot be undone.`)) return;
+    if (!window.confirm(`Delete "${product.name}"? This also removes it from bags and wishlists and deletes its reviews. It cannot be undone. (To just hide it, set it to Inactive.)`)) return;
     try {
       await deleteProduct(id).unwrap();
       router.push("/products");

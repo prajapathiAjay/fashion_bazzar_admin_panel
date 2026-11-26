@@ -79,7 +79,7 @@ export default function AdminDashboard() {
 
           {/* Revenue + categories */}
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
-            <Card title="Revenue" subtitle={`Last ${rangeLabel}`} className="xl:col-span-2">
+            <Card title="Gross sales" subtitle={`Last ${rangeLabel}`} className="xl:col-span-2">
               <RevenueChart series={data.revenue} />
             </Card>
             <Card title="Sales by Category" subtitle="Revenue share" action={{ label: "View all", href: "/category" }}>

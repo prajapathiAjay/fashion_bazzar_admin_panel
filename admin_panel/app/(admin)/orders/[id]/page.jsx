@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { ArrowLeft, ArrowRight, Check, CreditCard, Loader2, MapPin, Package, RotateCcw, User, XCircle } from "lucide-react";
-import { useGetOrderQuery, useUpdateReturnMutation } from "@/lib/api/ordersApi";
+import { useGetOrderQuery, useSettleRefundMutation, useUpdateReturnMutation } from "@/lib/api/ordersApi";
 import { formatCurrency } from "@/components/dashboard/format";
 import useOrderStatusChange, { noticeClass } from "@/components/orders/useOrderStatusChange";
 import {
@@ -13,6 +13,7 @@ import {
   PaymentBadge,
   ReturnBadge,
   StatusBadge,
+  refundOwed,
   customerName,
   formatDateTime,
   itemCount,
@@ -93,6 +94,59 @@ function StatusProgress({ status, order }) {
   );
 }
 
+// Cancelled online order whose Razorpay refund failed: retry it, or record a refund done by hand
+function RefundOwedPanel({ order }) {
+  const [settleRefund, { isLoading, originalArgs }] = useSettleRefundMutation();
+  const [notice, setNotice] = useState(null);
+  const total = formatCurrency(order.totalAmount ?? 0);
+
+  const run = async (mode, question) => {
+    if (!window.confirm(question)) return;
+    setNotice(null);
+    try {
+      const res = await settleRefund({ id: order._id, mode }).unwrap();
+      setNotice({ type: "success", text: res.message });
+    } catch (err) {
+      setNotice({ type: "error", text: err?.data?.message || "Could not update the refund" });
+    }
+  };
+  const busy = (mode) => isLoading && originalArgs?.mode === mode;
+  const btn = "inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium shadow-sm transition disabled:cursor-not-allowed disabled:opacity-60";
+
+  return (
+    <section className="mb-6 rounded-xl border border-danger/30 bg-white px-5 py-4 shadow-sm">
+      <p className="text-sm font-semibold text-danger">Refund of {total} still owed</p>
+      <p className="mt-1 text-sm text-muted">
+        This order was cancelled after an online payment, but Razorpay didn&apos;t accept the refund. Try again, or refund it
+        from the Razorpay dashboard and record it here.
+      </p>
+      <div className="mt-4 flex flex-wrap justify-end gap-3">
+        <button
+          type="button"
+          disabled={isLoading}
+          onClick={() => run("manual", `Record that ${total} was refunded to the customer from the Razorpay dashboard?`)}
+          className={`${btn} border border-line-strong bg-white text-ink hover:bg-mist`}
+        >
+          {busy("manual") ? <Loader2 size={15} className="animate-spin" /> : <Check size={15} />} Mark refunded
+        </button>
+        <button
+          type="button"
+          disabled={isLoading}
+          onClick={() => run("retry", `Try the Razorpay refund of ${total} again?`)}
+          className={`${btn} bg-brand text-white hover:bg-brand-dark`}
+        >
+          {busy("retry") ? <Loader2 size={15} className="animate-spin" /> : <RotateCcw size={15} />} Retry refund
+        </button>
+      </div>
+      {notice && (
+        <p role="status" className={`mt-4 rounded-lg px-4 py-2.5 text-sm ${noticeClass(notice.type)}`}>
+          {notice.text}
+        </p>
+      )}
+    </section>
+  );
+}
+
 // The customer's return request and the next step the admin can take
 function ReturnPanel({ order }) {
   const r = order.returnRequest;
@@ -131,7 +185,14 @@ function ReturnPanel({ order }) {
           <Row label="Requested">{formatDateTime(r.requestedAt)}</Row>
           <Row label="Reason">{r.reason || "—"}</Row>
           {isCod && <Row label="Refund to (UPI / bank)"><span className="break-all">{r.refundTo || "—"}</span></Row>}
-          <Row label="Refund amount">{total} · {isCod ? "send manually" : "automatic via Razorpay"}</Row>
+          <Row label="Refund amount">
+            {total} ·{" "}
+            {isCod
+              ? "send manually"
+              : r.status === "Received"
+                ? <span className="text-danger">Razorpay refund failed — refund it from the Razorpay dashboard, then mark it sent</span>
+                : "automatic via Razorpay when received"}
+          </Row>
           {r.adminNote && <Row label="Note to customer">{r.adminNote}</Row>}
           {r.receivedAt && <Row label="Received back">{formatDateTime(r.receivedAt)}</Row>}
           {r.refundedAt && <Row label="Refunded">{formatDateTime(r.refundedAt)}</Row>}
@@ -301,6 +362,7 @@ export default function ViewOrderPage() {
         )}
       </div>
 
+      {refundOwed(order) && <RefundOwedPanel order={order} />}
       {order.returnRequest?.status && <ReturnPanel order={order} />}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">

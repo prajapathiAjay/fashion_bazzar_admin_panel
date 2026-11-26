@@ -26,7 +26,9 @@ const SUMMARY_MAX = 160;
 const DESC_MAX = 2000;
 const IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 const MAX_IMAGES = 8;
-const SIZE_PRESETS = ["XS", "S", "M", "L", "XL", "XXL"];
+// The only sizes the shop's bag accepts (backend cart + product schema). No free-text sizes:
+// a size outside this list could never be added to the bag.
+const SIZE_PRESETS = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "3XL"];
 
 const emptyProduct = {
   name: "",
@@ -130,7 +132,6 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
   const [images, setImages] = useState(() =>
     (initialValues?.images ?? []).map((url) => ({ key: nextImageKey(), preview: url, url }))
   );
-  const [sizeInput, setSizeInput] = useState("");
   const [colorInput, setColorInput] = useState("");
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
@@ -224,6 +225,8 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
 
   // ---- Submit ----
   const validate = () => {
+    // older products may carry a size the bag can't take (e.g. "Free size")
+    const badSizes = product.sizes.filter((s) => !SIZE_PRESETS.includes(s));
     const next = {};
     const price = Number(product.price);
     const discount = product.discount === "" ? 0 : Number(product.discount);
@@ -239,6 +242,7 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
     if (Number.isNaN(stock) || stock < 0 || !Number.isInteger(stock))
       next.stock = "Enter a whole number (0 or more)";
     if (!product.categories.length) next.categories = "Pick at least one category";
+    if (badSizes.length) next.sizes = `Remove ${badSizes.join(", ")}: only XXS–3XL can be added to the bag`;
 
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -650,23 +654,10 @@ const ProductForm = ({ initialValues, onSubmit, onCancel }) => {
                       </span>
                     ))}
                 </div>
-                <div className="mt-3 flex gap-2">
-                  <input
-                    type="text"
-                    value={sizeInput}
-                    onChange={(e) => setSizeInput(e.target.value)}
-                    onKeyDown={tagKeyDown("sizes", sizeInput, setSizeInput)}
-                    placeholder="Custom size, e.g. 32, 34 or Free size"
-                    className={inputClass("sizes")}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => addTag("sizes", sizeInput, setSizeInput)}
-                    className="shrink-0 rounded-lg border border-line-strong bg-white px-3.5 text-sm font-medium text-ink-soft shadow-sm hover:bg-snow"
-                  >
-                    Add
-                  </button>
-                </div>
+                <p className="mt-2 text-xs text-muted">
+                  Leave all sizes off for one-size items like bags and jewellery.
+                </p>
+                <FieldError message={errors.sizes} />
               </div>
 
               {/* Colors */}

@@ -7,6 +7,7 @@ const STATUS_COLORS = {
   Shipped: "#4F63C0",
   Delivered: "#109474",
   Cancelled: "#9A2E3C",
+  Returned: "#5E7A8A",
 };
 
 // counts per status (from /admin/stats/dashboard -> orderStatus); statuses with 0 orders are hidden

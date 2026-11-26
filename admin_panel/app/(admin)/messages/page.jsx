@@ -48,7 +48,7 @@ function MessageCard({ msg }) {
   };
 
   // opens the admin's email app with the customer, subject and their message quoted
-  const replyHref = `mailto:${msg.email}?subject=${encodeURIComponent(`Re: ${msg.topic}`)}&body=${encodeURIComponent(
+  const replyHref = `mailto:${encodeURIComponent(msg.email)}?subject=${encodeURIComponent(`Re: ${msg.topic}`)}&body=${encodeURIComponent(
     `\n\n---\nOn ${formatDateTime(msg.createdAt)}, ${msg.name} wrote:\n${msg.message}`
   )}`;
 
@@ -59,7 +59,7 @@ function MessageCard({ msg }) {
       <header className="flex flex-wrap items-start gap-3">
         <div className="min-w-0 leading-tight">
           <p className="font-semibold text-ink">{msg.name}</p>
-          <a href={`mailto:${msg.email}`} className="text-sm text-muted hover:text-brand hover:underline">
+          <a href={`mailto:${encodeURIComponent(msg.email)}`} className="text-sm text-muted hover:text-brand hover:underline">
             {msg.email}
           </a>
         </div>

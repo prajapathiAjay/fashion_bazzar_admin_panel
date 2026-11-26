@@ -21,7 +21,7 @@ export default function Products() {
   const [deleteProduct, { isLoading: isDeleting, originalArgs: deletingId }] = useDeleteProductMutation();
 
   const handleDelete = async (product) => {
-    if (!window.confirm(`Delete "${product.name}"? This also removes it from bags and wishlists, and cannot be undone.`)) return;
+    if (!window.confirm(`Delete "${product.name}"? This also removes it from bags and wishlists and deletes its reviews. It cannot be undone. (To just hide it, set it to Inactive.)`)) return;
     try {
       await deleteProduct(product._id).unwrap();
     } catch (err) {

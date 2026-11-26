@@ -50,8 +50,11 @@ function Sparkline({ data }) {
 
 export default function StatCard({ kpi, rangeLabel }) {
   const Icon = ICONS[kpi.key];
-  // change is null when the previous period had nothing to compare with
+  // change is null when there's nothing to compare: no data before, or the previous value was 0
   const hasChange = kpi.change !== null && kpi.change !== undefined;
+  // older API responses have no hasPrevious: treat a missing change as "no data"
+  const hasPrevious = kpi.hasPrevious ?? hasChange;
+  const unit = kpi.changeUnit === "pts" ? " pts" : "%";
   const up = kpi.change >= 0;
   // For metrics like return rate, going down is the good direction
   const good = kpi.invert ? !up : up;
@@ -60,7 +63,10 @@ export default function StatCard({ kpi, rangeLabel }) {
   return (
     <div className="rounded-xl border border-line bg-white p-5">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted">{kpi.label}</p>
+        <p className="text-sm text-muted" title={kpi.hint}>
+          {kpi.label}
+          {kpi.hint && <span className="ml-1 cursor-help text-subtle" aria-label={kpi.hint}>ⓘ</span>}
+        </p>
         <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-mist text-brand">
           <Icon size={16} strokeWidth={1.75} />
         </span>
@@ -78,10 +84,12 @@ export default function StatCard({ kpi, rangeLabel }) {
             }`}
           >
             {up ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-            {Math.abs(kpi.change)}%
+            {Math.abs(kpi.change)}{unit}
           </span>
           <span className="text-subtle">vs prev. {rangeLabel}</span>
             </>
+          ) : hasPrevious ? (
+            <span className="text-subtle">Up from 0 in the previous {rangeLabel}</span>
           ) : (
             <span className="text-subtle">No data for the previous {rangeLabel}</span>
           )}

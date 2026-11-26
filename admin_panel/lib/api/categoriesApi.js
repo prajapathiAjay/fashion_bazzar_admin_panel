@@ -4,7 +4,8 @@ export const categoriesApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     // GET /category
     getCategories: build.query({
-      query: () => "/category",
+      // includeInactive: the admin also sees hidden categories (the shop only gets active ones)
+      query: () => "/category?includeInactive=true",
       transformResponse: (response) => response.data,
       // "LIST" lets a delete refresh the list without refetching the deleted category
       providesTags: [{ type: "Category", id: "LIST" }],

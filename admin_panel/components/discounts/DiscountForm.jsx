@@ -28,13 +28,13 @@ const empty = {
   isActive: true,
 };
 
-// Date from the API -> "2026-10-15" for <input type="date">, in the admin's own time zone
-// (the API sends UTC, so IST midnight arrives as the previous day 18:30Z; slicing the string would be a day off)
+// Date from the API -> "2026-10-15" for <input type="date">, always read in Indian time
+// (the server saves start/end of the day in IST, so this gives back the same day the admin picked,
+// whatever time zone the admin's computer or the server is in)
 const toDateInput = (v) => {
   if (!v) return "";
-  const d = new Date(v);
-  const pad = (n) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  // en-CA formats as YYYY-MM-DD
+  return new Date(v).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
 };
 const toText = (v) => (v === null || v === undefined ? "" : String(v));
 
@@ -81,6 +81,8 @@ function ActionButtons({ onCancel, submitting, isEdit }) {
 
 export default function DiscountForm({ initialValues, onSubmit, onCancel }) {
   const isEdit = Boolean(initialValues);
+  // orders remember the code as text, so a used code is locked (the server refuses the change too)
+  const codeLocked = isEdit && (initialValues?.used ?? 0) > 0;
   const [form, setForm] = useState(() =>
     initialValues
       ? {
@@ -223,11 +225,13 @@ export default function DiscountForm({ initialValues, onSubmit, onCancel }) {
                     value={form.code}
                     onChange={set("code")}
                     placeholder="e.g. FESTIVE25"
-                    className={`${inputClass("code")} font-mono uppercase tracking-wider`}
+                    className={`${inputClass("code")} font-mono uppercase tracking-wider disabled:bg-mist disabled:text-muted`}
                     autoFocus={!isEdit}
+                    disabled={codeLocked}
                   />
                   <button
                     type="button"
+                    disabled={codeLocked}
                     onClick={() => {
                       setForm((f) => ({ ...f, code: generateCode() }));
                       setErrors((er) => ({ ...er, code: undefined }));
@@ -237,7 +241,11 @@ export default function DiscountForm({ initialValues, onSubmit, onCancel }) {
                     <Shuffle size={15} /> Generate
                   </button>
                 </div>
-                <p className="mt-1.5 text-xs text-subtle">Capital letters, numbers and dashes only.</p>
+                <p className="mt-1.5 text-xs text-subtle">
+                  {codeLocked
+                    ? "This code has already been used, so it can't be changed (orders refer to it)."
+                    : "Capital letters, numbers and dashes only."}
+                </p>
                 <Err msg={errors.code} />
               </div>
 

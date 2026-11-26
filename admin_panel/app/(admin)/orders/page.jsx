@@ -14,6 +14,7 @@ import {
   ORDER_STATUSES,
   ReturnBadge,
   hasOpenReturn,
+  refundOwed,
   PaymentBadge,
   StatusBadge,
   customerName,
@@ -33,7 +34,7 @@ const columns = [
   { col_label: "Actions", value: "actions" },
 ];
 
-// "Returns" = orders with a return the admin still has to handle
+// "Returns" = returns the admin still has to handle, plus cancelled orders whose refund is still owed
 const FILTERS = ["All", ...ORDER_STATUSES, "Returns"];
 
 export default function OrdersPage() {
@@ -53,7 +54,7 @@ export default function OrdersPage() {
   const counts = useMemo(() => {
     const c = { All: orders.length };
     for (const o of orders) c[o.status] = (c[o.status] ?? 0) + 1;
-    c.Returns = orders.filter(hasOpenReturn).length;
+    c.Returns = orders.filter((o) => hasOpenReturn(o) || refundOwed(o)).length;
     return c;
   }, [orders]);
 
@@ -62,7 +63,7 @@ export default function OrdersPage() {
     const q = search.trim().toLowerCase();
     return orders.filter((o) => {
       if (statusFilter === "Returns") {
-        if (!hasOpenReturn(o)) return false;
+        if (!hasOpenReturn(o) && !refundOwed(o)) return false;
       } else if (statusFilter !== "All" && o.status !== statusFilter) return false;
       if (!q) return true;
       return [o.orderNumber, customerName(o.user), o.user?.email]
@@ -100,6 +101,11 @@ export default function OrdersPage() {
       <div className="flex flex-col items-start gap-1">
         <StatusBadge status={o.status} />
         {hasOpenReturn(o) && <ReturnBadge status={o.returnRequest.status} />}
+        {refundOwed(o) && (
+          <span className="inline-flex items-center rounded-full bg-danger-50 px-2.5 py-1 text-xs font-medium text-danger ring-1 ring-danger/30">
+            Refund due
+          </span>
+        )}
       </div>
     ),
     actions: <ActionsMenu label={`Actions for ${o.orderNumber}`} items={rowActions(o)} />,

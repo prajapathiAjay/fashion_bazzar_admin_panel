@@ -26,8 +26,16 @@ export const ordersApi = baseApi.injectEndpoints({
         "Order",
         "Customer", // customer pages show order status and total spent
         { type: "Order", id },
-        ...(status === "Cancelled" ? ["Product"] : []),
+        // cancelling gives stock and the coupon use back
+        ...(status === "Cancelled" ? ["Product", "Discount"] : []),
       ],
+    }),
+
+    // PATCH /api/admin/orders/:id/refund  body: { mode: "retry" | "manual" }
+    // a cancelled online order whose Razorpay refund failed: try again, or record a manual refund
+    settleRefund: build.mutation({
+      query: ({ id, mode }) => ({ url: `/admin/orders/${id}/refund`, method: "PATCH", body: { mode } }),
+      invalidatesTags: (result, error, { id }) => ["Order", "Customer", { type: "Order", id }],
     }),
 
     // PATCH /api/admin/orders/:id/return  body: { action: "approve" | "reject" | "receive" | "refunded", note? }
@@ -38,10 +46,17 @@ export const ordersApi = baseApi.injectEndpoints({
         "Order",
         "Customer",
         { type: "Order", id },
-        ...(action === "receive" ? ["Product"] : []),
+        // receiving a return gives stock and the coupon use back
+        ...(action === "receive" ? ["Product", "Discount"] : []),
       ],
     }),
   }),
 });
 
-export const { useGetOrdersQuery, useGetOrderQuery, useUpdateOrderStatusMutation, useUpdateReturnMutation } = ordersApi;
+export const {
+  useGetOrdersQuery,
+  useGetOrderQuery,
+  useUpdateOrderStatusMutation,
+  useUpdateReturnMutation,
+  useSettleRefundMutation,
+} = ordersApi;
