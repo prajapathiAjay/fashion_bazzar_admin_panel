@@ -75,7 +75,7 @@ export default function CustomerMix({ data }) {
 
                   {hover === i && (
                     <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 w-40 -translate-x-1/2 rounded-lg border border-line bg-white px-3 py-2.5 text-xs shadow-lg">
-                      <p className="mb-1.5 font-medium text-ink">{m} 2026</p>
+                      <p className="mb-1.5 font-medium text-ink">{data.fullMonths?.[i] ?? m}</p>
                       {[
                         ["New", data.new[i], colors.new],
                         ["Returning", data.returning[i], colors.returning],

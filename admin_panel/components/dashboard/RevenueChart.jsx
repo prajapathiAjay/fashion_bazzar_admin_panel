@@ -43,7 +43,8 @@ export default function RevenueChart({ series }) {
 
   const totalCurrent = current.reduce((a, b) => a + b, 0);
   const totalPrev = previous.reduce((a, b) => a + b, 0);
-  const growth = (((totalCurrent - totalPrev) / totalPrev) * 100).toFixed(1);
+  // null when the previous period had no revenue (nothing to compare with)
+  const growth = totalPrev ? (((totalCurrent - totalPrev) / totalPrev) * 100).toFixed(1) : null;
 
   return (
     <div>
@@ -53,11 +54,17 @@ export default function RevenueChart({ series }) {
             {formatCurrency(totalCurrent)}
           </p>
           <p className="mt-0.5 text-xs text-subtle">
+            {growth === null ? (
+              "No revenue in the previous period to compare with"
+            ) : (
+              <>
             <span className={`font-medium ${growth >= 0 ? "text-success" : "text-danger"}`}>
               {growth >= 0 ? "+" : ""}
               {growth}%
             </span>{" "}
             compared to previous period
+              </>
+            )}
           </p>
         </div>
         <div className="flex items-center gap-4 text-xs text-muted">

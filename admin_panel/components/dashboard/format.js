@@ -14,6 +14,8 @@ export function formatCompactINR(v) {
 
 // Round an axis max up to a "nice" value and return evenly spaced ticks
 export function niceTicks(max, count = 4) {
+  // nothing to show yet (all zeros) -> a plain 0..count axis instead of NaN
+  if (!(max > 0)) max = count;
   const raw = max / count;
   const mag = 10 ** Math.floor(Math.log10(raw));
   const step = [1, 2, 2.5, 5, 10].map((m) => m * mag).find((s) => s >= raw);

@@ -6,7 +6,7 @@ import { formatCurrency } from "@/components/dashboard/format";
 import { discountCapLabel, discountValueLabel, formatShortDate, generateCode } from "./discountUtils";
 
 /**
- * Create / edit a discount code (UI only for now).
+ * Create / edit a discount code.
  * Pass `initialValues` for edit mode.
  *
  * @param {object} [initialValues]

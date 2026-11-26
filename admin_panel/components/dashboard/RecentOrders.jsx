@@ -1,25 +1,16 @@
-import { CheckCircle2, Truck, Loader, Clock, XCircle } from "lucide-react";
+import Link from "next/link";
 import { formatCurrency } from "./format";
+import { StatusBadge, formatDateTime } from "@/components/orders/orderUtils";
 
-// Icon + label so status never relies on colour alone
-const STATUS_STYLES = {
-  Delivered: { cls: "bg-success-50 text-success ring-success/15", icon: CheckCircle2 },
-  Shipped: { cls: "bg-brand-50 text-brand-dark ring-brand/15", icon: Truck },
-  Processing: { cls: "bg-sun-50 text-ink-soft ring-sun-dark/20", icon: Loader },
-  Pending: { cls: "bg-mist text-ink-soft ring-muted/15", icon: Clock },
-  Cancelled: { cls: "bg-danger-50 text-danger ring-danger/15", icon: XCircle },
-};
+const initials = (name = "") =>
+  name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((n) => n[0].toUpperCase())
+    .join("");
 
-export function StatusBadge({ status }) {
-  const { cls, icon: Icon } = STATUS_STYLES[status];
-  return (
-    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${cls}`}>
-      <Icon size={12} strokeWidth={2} />
-      {status}
-    </span>
-  );
-}
-
+// Latest orders in the store (from /admin/stats/dashboard -> recentOrders)
 export default function RecentOrders({ orders }) {
   return (
     <div className="-mx-5 -mb-5 overflow-x-auto">
@@ -37,15 +28,17 @@ export default function RecentOrders({ orders }) {
           {orders.map((o) => (
             <tr key={o.id} className="transition-colors hover:bg-snow">
               <td className="px-5 py-3 font-medium text-ink">
-                {o.id}
+                <Link href={`/orders/${o.id}`} className="hover:text-brand hover:underline">
+                  {o.orderNumber}
+                </Link>
                 <p className="text-xs font-normal text-subtle">
-                  {o.items} item{o.items > 1 ? "s" : ""}
+                  {o.items} item{o.items === 1 ? "" : "s"}
                 </p>
               </td>
               <td className="px-5 py-3">
                 <div className="flex items-center gap-3">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-mist text-xs font-medium text-brand">
-                    {o.customer.split(" ").map((n) => n[0]).join("")}
+                    {initials(o.customer)}
                   </span>
                   <div className="leading-tight">
                     <p className="text-ink">{o.customer}</p>
@@ -53,7 +46,7 @@ export default function RecentOrders({ orders }) {
                   </div>
                 </div>
               </td>
-              <td className="whitespace-nowrap px-5 py-3 text-muted">{o.date}</td>
+              <td className="whitespace-nowrap px-5 py-3 text-muted">{formatDateTime(o.createdAt)}</td>
               <td className="px-5 py-3">
                 <StatusBadge status={o.status} />
               </td>

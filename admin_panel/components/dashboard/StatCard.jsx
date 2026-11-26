@@ -3,10 +3,10 @@ import {
   ShoppingCart,
   UserPlus,
   Receipt,
-  MousePointerClick,
-  Target,
+  Users,
   Repeat,
-  RotateCcw,
+  XCircle,
+  Package,
   ArrowUpRight,
   ArrowDownRight,
 } from "lucide-react";
@@ -17,19 +17,21 @@ const ICONS = {
   orders: ShoppingCart,
   customers: UserPlus,
   aov: Receipt,
-  sessions: MousePointerClick,
-  conversion: Target,
+  buyers: Users,
   returning: Repeat,
-  refund: RotateCcw,
+  cancelled: XCircle,
+  items: Package,
 };
 
 const FORMATTERS = {
   currency: formatCurrency,
   number: formatNumber,
   percent: (v) => `${v}%`,
+  decimal: (v) => v.toFixed(1),
 };
 
 function Sparkline({ data }) {
+  if (!data || data.length < 2) return null;
   const w = 100;
   const h = 32;
   const min = Math.min(...data);
@@ -48,6 +50,8 @@ function Sparkline({ data }) {
 
 export default function StatCard({ kpi, rangeLabel }) {
   const Icon = ICONS[kpi.key];
+  // change is null when the previous period had nothing to compare with
+  const hasChange = kpi.change !== null && kpi.change !== undefined;
   const up = kpi.change >= 0;
   // For metrics like return rate, going down is the good direction
   const good = kpi.invert ? !up : up;
@@ -66,6 +70,8 @@ export default function StatCard({ kpi, rangeLabel }) {
 
       <div className="mt-3 flex items-end justify-between">
         <div className="flex items-center gap-1.5 text-xs">
+          {hasChange ? (
+            <>
           <span
             className={`inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 font-medium ${
               good ? "bg-success-50 text-success" : "bg-danger-50 text-danger"
@@ -75,6 +81,10 @@ export default function StatCard({ kpi, rangeLabel }) {
             {Math.abs(kpi.change)}%
           </span>
           <span className="text-subtle">vs prev. {rangeLabel}</span>
+            </>
+          ) : (
+            <span className="text-subtle">No data for the previous {rangeLabel}</span>
+          )}
         </div>
         <Sparkline data={kpi.spark} />
       </div>

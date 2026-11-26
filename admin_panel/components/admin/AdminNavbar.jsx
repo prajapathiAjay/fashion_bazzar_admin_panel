@@ -1,6 +1,6 @@
 "use client";
 
-import { PanelLeftClose, PanelLeft, Search, Bell } from "lucide-react";
+import { PanelLeftClose, PanelLeft } from "lucide-react";
 
 export default function AdminNavbar({ collapsed, onToggle }) {
   return (
@@ -18,29 +18,11 @@ export default function AdminNavbar({ collapsed, onToggle }) {
             <PanelLeftClose size={19} strokeWidth={1.75} />
           )}
         </button>
-
-        {/* Search */}
-        <div className="flex items-center gap-2 rounded-md border border-line bg-snow px-3 py-2 w-72 focus-within:ring-1 focus-within:ring-brand/40">
-          <Search size={16} className="text-subtle" strokeWidth={1.75} />
-          <input
-            type="text"
-            placeholder="Search products, orders..."
-            className="w-full bg-transparent text-sm text-ink placeholder:text-subtle outline-none"
-          />
-        </div>
       </div>
 
       {/* Right side */}
       <div className="flex items-center gap-5">
-        <button
-          aria-label="Notifications"
-          className="relative rounded-md p-2 text-muted hover:bg-mist hover:text-ink transition-colors"
-        >
-          <Bell size={18} strokeWidth={1.75} />
-          <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-brand" />
-        </button>
-
-        <div className="flex items-center gap-3 border-l border-line pl-5">
+        <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand text-sm font-medium text-white">
             A
           </div>

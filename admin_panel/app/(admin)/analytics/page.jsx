@@ -1,36 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import { Download, CalendarDays } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import Card from "@/components/dashboard/Card";
 import StatCard from "@/components/dashboard/StatCard";
 import RangeTabs from "@/components/dashboard/RangeTabs";
-import ConversionFunnel from "@/components/analytics/ConversionFunnel";
-import TrafficSources from "@/components/analytics/TrafficSources";
+import EmptyState from "@/components/dashboard/EmptyState";
 import CustomerMix from "@/components/analytics/CustomerMix";
-import DeviceSplit from "@/components/analytics/DeviceSplit";
-import TopSearches from "@/components/analytics/TopSearches";
 import SalesHeatmap from "@/components/analytics/SalesHeatmap";
 import RegionList from "@/components/analytics/RegionList";
-import CohortTable from "@/components/analytics/CohortTable";
 import ProductPerformance from "@/components/analytics/ProductPerformance";
-import {
-  RANGES,
-  ANALYTICS_KPIS,
-  FUNNEL,
-  TRAFFIC_SOURCES,
-  CUSTOMER_MIX,
-  DEVICES,
-  TOP_SEARCHES,
-  HEATMAP,
-  REGIONS,
-  COHORTS,
-  PRODUCT_PERFORMANCE,
-} from "@/lib/data/analyticsData";
+import { RANGES, useGetAnalyticsStatsQuery } from "@/lib/api/statsApi";
 
+const MIX_COLORS = { new: "#9A2E3C", returning: "#4F63C0" };
+
+// Everything here is worked out from real orders (GET /api/admin/stats/analytics).
+// Visits, traffic sources, devices and searches need a tracking tool, so they are not shown.
 export default function AnalyticsPage() {
   const [range, setRange] = useState("30d");
   const rangeLabel = RANGES.find((r) => r.key === range).label;
+  const { data, isLoading, isFetching, isError, refetch } = useGetAnalyticsStatsQuery(range, { refetchOnMountOrArgChange: true });
+
+  const heatmapTotal = data?.heatmap?.values.flat().reduce((a, b) => a + b, 0) ?? 0;
+  const mixTotal = data ? [...data.customerMix.new, ...data.customerMix.returning].reduce((a, b) => a + b, 0) : 0;
 
   return (
     <div className="mx-auto max-w-[1400px] space-y-6">
@@ -44,71 +36,83 @@ export default function AnalyticsPage() {
             Last {rangeLabel}, compared with the previous {rangeLabel}
           </p>
         </div>
+        <RangeTabs ranges={RANGES} value={range} onChange={setRange} />
+      </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <RangeTabs ranges={RANGES} value={range} onChange={setRange} />
-          <button className="inline-flex items-center gap-2 rounded-lg border border-line bg-white px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:bg-mist">
-            <Download size={15} strokeWidth={1.75} />
-            Export report
+      {isError ? (
+        <div className="rounded-xl border border-line bg-white p-10 text-center">
+          <p className="text-sm text-muted">Couldn&apos;t load analytics.</p>
+          <button
+            type="button"
+            onClick={refetch}
+            className="mt-4 rounded-lg border border-line px-4 py-2 text-sm font-medium text-ink hover:bg-mist"
+          >
+            Try again
           </button>
         </div>
-      </div>
+      ) : isLoading || !data ? (
+        <div className="space-y-6" aria-busy="true" aria-label="Loading analytics">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="h-32 animate-pulse rounded-xl border border-line bg-white" />
+            ))}
+          </div>
+          <div className="h-96 animate-pulse rounded-xl border border-line bg-white" />
+        </div>
+      ) : (
+        <div className={`space-y-6 transition-opacity ${isFetching ? "opacity-60" : ""}`}>
+          {/* KPIs */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {data.kpis.map((kpi) => (
+              <StatCard key={kpi.key} kpi={kpi} rangeLabel={rangeLabel} />
+            ))}
+          </div>
 
-      {/* KPIs */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {ANALYTICS_KPIS[range].map((kpi) => (
-          <StatCard key={kpi.key} kpi={kpi} rangeLabel={rangeLabel} />
-        ))}
-      </div>
+          {/* Customers + regions */}
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+            <Card
+              title="New vs Returning Customers"
+              subtitle="Customers who placed an order, last 6 months"
+              className="xl:col-span-2"
+            >
+              {mixTotal ? (
+                <CustomerMix data={{ ...data.customerMix, colors: MIX_COLORS }} />
+              ) : (
+                <EmptyState>No orders in the last 6 months.</EmptyState>
+              )}
+            </Card>
+            <Card title="Top Regions" subtitle="Revenue by delivery state">
+              {data.regions.length ? (
+                <RegionList regions={data.regions} />
+              ) : (
+                <EmptyState>No orders in the last {rangeLabel}.</EmptyState>
+              )}
+            </Card>
+          </div>
 
-      {/* Funnel + traffic */}
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
-        <Card title="Conversion Funnel" subtitle="Where shoppers drop off on the way to purchase" className="xl:col-span-2">
-          <ConversionFunnel stages={FUNNEL} />
-        </Card>
-        <Card title="Traffic Sources" subtitle="Sessions and conversion by channel">
-          <TrafficSources sources={TRAFFIC_SOURCES} />
-        </Card>
-      </div>
-
-      {/* Customers + devices/search */}
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
-        <Card title="New vs Returning Customers" subtitle="Customers who placed an order, by month" className="xl:col-span-2">
-          <CustomerMix data={CUSTOMER_MIX} />
-        </Card>
-        <div className="flex flex-col gap-6">
-          <Card title="Devices" subtitle="Share of sessions">
-            <DeviceSplit devices={DEVICES} />
+          {/* When customers shop */}
+          <Card title="When Customers Shop" subtitle="Orders by day of week and time (IST)">
+            {heatmapTotal ? (
+              <SalesHeatmap data={data.heatmap} />
+            ) : (
+              <EmptyState>No orders in the last {rangeLabel}.</EmptyState>
+            )}
           </Card>
-          <Card title="Top Searches" subtitle="What shoppers look for on the store" className="flex-1">
-            <TopSearches terms={TOP_SEARCHES} />
+
+          {/* Product performance */}
+          <Card
+            title="Product Performance"
+            subtitle={`Best sellers in the last ${rangeLabel}`}
+            action={{ label: "All products", href: "/products" }}
+          >
+            {data.productPerformance.length ? (
+              <ProductPerformance products={data.productPerformance} />
+            ) : (
+              <EmptyState>No sales in the last {rangeLabel}.</EmptyState>
+            )}
           </Card>
         </div>
-      </div>
-
-      {/* Heatmap + regions */}
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
-        <Card title="When Customers Shop" subtitle="Orders by day of week and time (IST)" className="xl:col-span-2">
-          <SalesHeatmap data={HEATMAP} />
-        </Card>
-        <Card title="Top Regions" subtitle="Revenue by state">
-          <RegionList regions={REGIONS} />
-        </Card>
-      </div>
-
-      {/* Cohorts */}
-      <Card title="Customer Retention" subtitle="Share of each signup cohort that ordered again in the months after joining">
-        <CohortTable cohorts={COHORTS} />
-      </Card>
-
-      {/* Product performance */}
-      <Card
-        title="Product Performance"
-        subtitle="Views, conversion and returns for your top products"
-        action={{ label: "All products", href: "/products" }}
-      >
-        <ProductPerformance products={PRODUCT_PERFORMANCE} />
-      </Card>
+      )}
     </div>
   );
 }

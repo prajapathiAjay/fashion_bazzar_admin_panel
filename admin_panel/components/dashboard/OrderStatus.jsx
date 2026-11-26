@@ -1,6 +1,17 @@
 import { formatNumber } from "./format";
 
-export default function OrderStatus({ data }) {
+// One colour per order status (order.schema.js); kept distinct for colour-blind readers
+const STATUS_COLORS = {
+  Ordered: "#C9893A",
+  Packed: "#8A6BB8",
+  Shipped: "#4F63C0",
+  Delivered: "#109474",
+  Cancelled: "#9A2E3C",
+};
+
+// counts per status (from /admin/stats/dashboard -> orderStatus); statuses with 0 orders are hidden
+export default function OrderStatus({ data: counts }) {
+  const data = counts.filter((d) => d.count > 0).map((d) => ({ ...d, color: STATUS_COLORS[d.status] ?? "#BEB5AC" }));
   const total = data.reduce((a, d) => a + d.count, 0);
 
   return (
