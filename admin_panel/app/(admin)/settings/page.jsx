@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Check, Eye, EyeOff, KeyRound, Store, UserRound } from "lucide-react";
 import { setCredentials } from "@/lib/slice/authSlice";
+import { checkEmail, checkPhone } from "@/lib/validation";
 import {
   useChangePasswordMutation,
   useGetMyProfileQuery,
@@ -33,12 +34,16 @@ function Section({ icon: Icon, title, hint, children, footer }) {
   );
 }
 
-function TextField({ label, wide, hint, ...props }) {
+function TextField({ label, wide, hint, error, ...props }) {
   return (
     <label className={`block text-sm font-medium text-ink-soft ${wide ? "sm:col-span-2" : ""}`}>
       {label}
-      <input className={inputClass} {...props} />
-      {hint && <span className="mt-1 block text-xs font-normal text-subtle">{hint}</span>}
+      <input className={`${inputClass} ${error ? "border-danger" : ""}`} aria-invalid={Boolean(error)} {...props} />
+      {error ? (
+        <span role="alert" className="mt-1 block text-xs font-medium text-danger">{error}</span>
+      ) : (
+        hint && <span className="mt-1 block text-xs font-normal text-subtle">{hint}</span>
+      )}
     </label>
   );
 }
@@ -199,6 +204,7 @@ function StoreForm({ initial }) {
   const [form, setForm] = useState(initial);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
   const [updateStore, { isLoading }] = useUpdateStoreSettingsMutation();
 
   const changed = Object.keys(saved).some((k) => form[k] !== saved[k]);
@@ -207,10 +213,20 @@ function StoreForm({ initial }) {
     setForm((f) => ({ ...f, [key]: e.target.value }));
     setError("");
     setDone(false);
+    setFieldErrors((fe) => ({ ...fe, [key]: "" }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // same checks as the server, shown under each field
+    const errors = {
+      storeName: form.storeName?.trim() ? "" : "Store name can't be empty",
+      supportEmail: checkEmail(form.supportEmail, { optional: true }),
+      supportPhone: checkPhone(form.supportPhone, { optional: true }),
+    };
+    const shown = Object.fromEntries(Object.entries(errors).filter(([, m]) => m));
+    setFieldErrors(shown);
+    if (Object.keys(shown).length) return;
     try {
       // the server trims spaces, so show exactly what it saved
       const result = (await updateStore(form).unwrap()) ?? form;
@@ -224,7 +240,7 @@ function StoreForm({ initial }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form noValidate onSubmit={handleSubmit}>
       <Section
         icon={Store}
         title="Store details"
@@ -257,10 +273,11 @@ function StoreForm({ initial }) {
           </>
         }
       >
-        <TextField label="Store name" value={form.storeName} onChange={set("storeName")} maxLength={60} required />
+        <TextField label="Store name" value={form.storeName} onChange={set("storeName")} maxLength={60} error={fieldErrors.storeName} />
         <TextField
           label="Support email"
           type="email"
+          error={fieldErrors.supportEmail}
           value={form.supportEmail}
           onChange={set("supportEmail")}
           maxLength={200}
@@ -269,6 +286,7 @@ function StoreForm({ initial }) {
         <TextField
           label="Support phone"
           type="tel"
+          error={fieldErrors.supportPhone}
           value={form.supportPhone}
           onChange={set("supportPhone")}
           maxLength={30}

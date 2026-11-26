@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { clearSessionExpired, setCredentials } from "@/lib/slice/authSlice";
 import { isTokenExpired } from "@/lib/tokenExpiry";
+import { checkEmail } from "@/lib/validation";
 import {
   ArrowRight,
   Eye,
@@ -46,10 +47,16 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     dispatch(clearSessionExpired()); // hide the "session expired" message once they try again
+    // quick checks before asking the server
+    const emailError = checkEmail(email);
+    if (emailError || !password) {
+      setError(emailError || "Enter your password");
+      return;
+    }
     setSubmitting(true);
     try {
       // backend only lets admins sign in here, so no role check needed
-      const { token } = await signIn({ email, password }).unwrap();
+      const { token } = await signIn({ email: email.trim().toLowerCase(), password }).unwrap();
       dispatch(setCredentials(token));
       router.replace("/dashboard");
     } catch (err) {
@@ -131,7 +138,7 @@ export default function LoginPage() {
           <h1 className="mt-3 font-display text-[34px] leading-tight">Welcome back</h1>
           <p className="mt-1 text-sm text-faint">Sign in to manage the store.</p>
 
-          <form onSubmit={handleSubmit} className="mt-7 flex flex-col gap-4">
+          <form noValidate onSubmit={handleSubmit} className="mt-7 flex flex-col gap-4">
             <div>
               <label htmlFor="email" className="mb-1.5 block text-xs font-medium tracking-wide text-faint">
                 Email
